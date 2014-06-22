@@ -9,6 +9,11 @@ class Request < ActiveRecord::Base
       data.Root do |root|
         auth_data(root)
       end
+    when '/institutioninfo'
+      data = ::Builder::XmlMarkup.new(indent: 2)
+      data.Root do |root|
+        auth_data(root)
+      end
     end
   end
   
