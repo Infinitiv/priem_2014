@@ -1,0 +1,15 @@
+%h1 Перечень запросов
+.panel-group#accordion
+  - @requests.each do |request|
+    .panel.panel-primary
+      .panel-heading.clearfix
+        %h1.panel-title.pull-left= link_to "Запрос № #{request.id}", "#request_#{request.id}", data: {toggle: "collapse", parent: "#accordion"}
+        .pull-right= request.updated_at
+      .panel-collapse.collapse{id: "request_#{request.id}"}
+        .panel-body
+          %df
+            %dt
+              %pre= request.input
+            %dd
+              %pre= request.output
+= will_paginate @requests

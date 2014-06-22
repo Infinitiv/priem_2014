@@ -51,3 +51,4 @@ end
 
 gem 'haml-rails'
 gem 'bootstrap-sass'
+gem 'will_paginate'
