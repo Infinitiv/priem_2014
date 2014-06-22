@@ -1,0 +1,8 @@
+= form_for(@request) do |f|
+  .field
+    = f.label 'Запрос'
+    %br
+    = f.select :query_id, options_for_select(@queries.collect {|p| [p.name, p.id]}), {:include_blank => ''}, {class: "form-control"}
+  %br
+  .field
+    = f.submit 'Создать запрос', class: "btn btn-primary"
