@@ -1,8 +1,8 @@
 class Application < ActiveRecord::Base
-  
   belongs_to :campaign
 
   def self.import(file)
+    accessible_attributes = Application.column_names
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each do |i|
@@ -25,5 +25,9 @@ class Application < ActiveRecord::Base
   
   def fio
     [entrant_last_name, entrant_first_name, entrant_middle_name].compact.join(' ')
+  end
+  
+  def summa
+    [russian, chemistry, biology].sum
   end
 end

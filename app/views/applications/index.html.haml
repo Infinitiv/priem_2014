@@ -1,0 +1,19 @@
+%h1 Список заявлений
+= form_tag import_applications_path, multipart: true do
+  = file_field_tag :file
+  %br/
+  = submit_tag "Загрузить заявления", class: "btn btn-primary"
+= will_paginate @applications
+%table.table
+  %thead
+    %th Номер заявления
+    %th Ф.И.О.
+    %th Сумма баллов
+    %th Действия с заявлением
+  %tbody
+  - @applications.each do |application|
+    %tr
+      %td= link_to application.application_number, application_path(application)
+      %td= application.fio
+      %td= application.summa
+      %td

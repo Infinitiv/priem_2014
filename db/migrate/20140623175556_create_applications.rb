@@ -16,12 +16,6 @@ class CreateApplications < ActiveRecord::Migration
       t.integer :gender_id
       t.date :birth_date
       t.boolean :need_hostel, :default => false
-      t.boolean :lech_budget, :default => false
-      t.boolean :ped_budget, :default => false
-      t.boolean :stomat_budget, :default => false
-      t.boolean :lech_paid, :default => false
-      t.boolean :ped_paid, :default => false
-      t.boolean :stomat_paid, :default => false
       t.boolean :special_entrant, default: false
       t.boolean :ege, default: false
       t.boolean :ege_additional, default: false
