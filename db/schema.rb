@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140623180650) do
+ActiveRecord::Schema.define(version: 20140626183323) do
 
   create_table "applications", force: true do |t|
     t.integer  "application_number"
@@ -51,6 +51,24 @@ ActiveRecord::Schema.define(version: 20140623180650) do
     t.datetime "updated_at"
   end
 
+  create_table "competition_items", force: true do |t|
+    t.string   "name",       default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "competitions", force: true do |t|
+    t.integer  "application_id"
+    t.integer  "competition_item_id"
+    t.integer  "priority"
+    t.date     "admission_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "competitions", ["application_id"], name: "index_competitions_on_application_id", using: :btree
+  add_index "competitions", ["competition_item_id"], name: "index_competitions_on_competition_item_id", using: :btree
+
   create_table "education_document_types", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -58,14 +76,16 @@ ActiveRecord::Schema.define(version: 20140623180650) do
   end
 
   create_table "education_documents", force: true do |t|
+    t.integer  "application_id"
     t.integer  "education_document_type_id"
-    t.string   "series"
-    t.string   "number"
-    t.date     "date"
+    t.string   "education_document_series"
+    t.string   "education_document_number"
+    t.date     "education_document_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "education_documents", ["application_id"], name: "index_education_documents_on_application_id", using: :btree
   add_index "education_documents", ["education_document_type_id"], name: "index_education_documents_on_education_document_type_id", using: :btree
 
   create_table "identity_document_types", force: true do |t|
@@ -75,14 +95,16 @@ ActiveRecord::Schema.define(version: 20140623180650) do
   end
 
   create_table "identity_documents", force: true do |t|
+    t.integer  "application_id"
     t.integer  "identity_document_type_id"
-    t.string   "series"
-    t.string   "number"
-    t.date     "date"
+    t.string   "identity_document_series"
+    t.string   "identity_document_number"
+    t.date     "identity_document_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "identity_documents", ["application_id"], name: "index_identity_documents_on_application_id", using: :btree
   add_index "identity_documents", ["identity_document_type_id"], name: "index_identity_documents_on_identity_document_type_id", using: :btree
 
   create_table "queries", force: true do |t|
