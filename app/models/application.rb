@@ -8,14 +8,18 @@ class Application < ActiveRecord::Base
     accessible_attributes = column_names
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
-    (2..spreadsheet.last_row).each do |i|
-      row = Hash[[header, spreadsheet.row(i)].transpose]
-      application = find_by_application_number(row["application_number"]) || new
-      application.attributes = row.to_hash.slice(*accessible_attributes)
-      if application.save!
-        IdentityDocument.import_from_row(row, application)
-        EducationDocument.import_from_row(row, application)
-        Competition.import_from_row(row, application)
+    (2..spreadsheet.last_row).to_a.in_groups_of(100, false) do |group|
+      ActiveRecord::Base.transaction do
+        group.each do |i|
+          row = Hash[[header, spreadsheet.row(i)].transpose]
+          application = find_by_application_number(row["application_number"]) || new
+          application.attributes = row.to_hash.slice(*accessible_attributes)
+          if application.save!
+            IdentityDocument.import_from_row(row, application)
+            EducationDocument.import_from_row(row, application)
+            Competition.import_from_row(row, application)
+          end
+        end
       end
     end
   end
@@ -36,5 +40,5 @@ class Application < ActiveRecord::Base
   
   def summa
     [russian, chemistry, biology].sum
-  end
+  end 
 end

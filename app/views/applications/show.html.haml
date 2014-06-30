@@ -1,0 +1,31 @@
+%h1= @application.fio
+%h2 Перечень конкурсов
+%ol
+  - @application.competitions.order(:priority).each do |competition|
+    %li= competition.competition_item.name
+%table.table
+  %thead
+    %tr
+      %th Сумма баллов
+      %th Химия
+      %th Биология
+      %th Русский язык
+  %tbody
+    %tr
+      %td= @application.summa
+      %td= @application.chemistry
+      %td= @application.biology
+      %td= @application.russian
+    
+%h2 Документы
+%dl
+  - @application.identity_documents.each do |identity_document|
+    %dt
+      %h3 Документ, удостоверяющий личность
+      = identity_document.identity_document_type.name if identity_document.identity_document_type
+    %dd= identity_document.identity_document_data
+  - @application.education_documents.each do |education_document|
+    %dt
+      %h3 Документ об образовании
+      = education_document.education_document_type.name if education_document.education_document_type
+    %dd= education_document.education_document_data

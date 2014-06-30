@@ -9,7 +9,7 @@ class Competition < ActiveRecord::Base
       competition.destroy
     end
     competition_items.each do |competition_item|
-      competition = competitions.where(id: "c_#{competition_item.id}").first || competitions.new if row["c_#{competition_item.id}"]
+      competition = competitions.where(id: competition_item.id).first || competitions.new if row["c_#{competition_item.id}"]
       competition.update_attributes(competition_item_id: competition_item.id, priority: row["c_#{competition_item.id}"]) if row["c_#{competition_item.id}"]
     end
   end
