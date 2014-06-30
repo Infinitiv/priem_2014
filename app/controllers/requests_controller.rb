@@ -9,6 +9,7 @@ class RequestsController < ApplicationController
   def new
     @request = Request.new
     @queries = Query.order(:name)
+    @campaigns = Campaign.order(:year_start)
   end
   
   def create

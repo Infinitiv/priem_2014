@@ -1,8 +1,18 @@
 = form_for(@request) do |f|
   .field
+    - @campaigns.each do |campaign|
+      = label_tag campaign.name 
+      = radio_button_tag('campaign', campaign.id)
+      %br/
+  .field
     = f.label 'Запрос'
     %br
     = f.select :query_id, options_for_select(@queries.collect {|p| [p.name, p.id]}), {:include_blank => ''}, {class: "form-control"}
+  .checkboxes
+    = label_tag 'campaign_info', check_box_tag('campaign_info') + "Сведения о приемной кампании", :class => "checkbox"
+    = label_tag 'admission_info', check_box_tag('admission_info') + 'Сведения об объеме и структуре приема', :class => "checkbox"
+    = label_tag 'application', check_box_tag('application') + 'Сведения о заявлении', :class => "checkbox"
+    = label_tag 'applications', check_box_tag('applications') + 'Сведения о заявлениях', :class => "checkbox"
   %br
   .field
     = f.submit 'Создать запрос', class: "btn btn-primary"

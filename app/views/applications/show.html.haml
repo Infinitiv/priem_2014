@@ -3,20 +3,6 @@
 %ol
   - @application.competitions.order(:priority).each do |competition|
     %li= competition.competition_item.name
-%table.table
-  %thead
-    %tr
-      %th Сумма баллов
-      %th Химия
-      %th Биология
-      %th Русский язык
-  %tbody
-    %tr
-      %td= @application.summa
-      %td= @application.chemistry
-      %td= @application.biology
-      %td= @application.russian
-    
 %h2 Документы
 %dl
   - @application.identity_documents.each do |identity_document|
@@ -28,4 +14,6 @@
     %dt
       %h3 Документ об образовании
       = education_document.education_document_type.name if education_document.education_document_type
-    %dd= education_document.education_document_data
+    %dd
+      = education_document.education_document_data
+      %span.label.label-success= @application.original_received_date if @application.original_received_date
