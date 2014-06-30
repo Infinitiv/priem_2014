@@ -13,6 +13,29 @@
 
 ActiveRecord::Schema.define(version: 20140626183323) do
 
+  create_table "admission_volumes", force: true do |t|
+    t.integer  "campaign_id"
+    t.integer  "education_level_id", default: 11
+    t.integer  "course",             default: 1
+    t.integer  "direction_id"
+    t.integer  "number_budget_o",    default: 0
+    t.integer  "number_budget_oz",   default: 0
+    t.integer  "number_budget_z",    default: 0
+    t.integer  "number_paid_o",      default: 0
+    t.integer  "number_paid_oz",     default: 0
+    t.integer  "number_paid_z",      default: 0
+    t.integer  "number_target_o",    default: 0
+    t.integer  "number_target_oz",   default: 0
+    t.integer  "number_target_z",    default: 0
+    t.integer  "number_quota_o",     default: 0
+    t.integer  "number_quota_oz",    default: 0
+    t.integer  "number_quota_z",     default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admission_volumes", ["campaign_id"], name: "index_admission_volumes_on_campaign_id", using: :btree
+
   create_table "applications", force: true do |t|
     t.integer  "application_number"
     t.integer  "campaign_id"
@@ -51,6 +74,31 @@ ActiveRecord::Schema.define(version: 20140626183323) do
     t.datetime "updated_at"
   end
 
+  create_table "campaign_dates", force: true do |t|
+    t.integer  "course",              default: 1
+    t.integer  "education_level_id",  default: 5
+    t.integer  "education_form_id",   default: 11
+    t.integer  "education_source_id"
+    t.integer  "stage"
+    t.date     "date_start"
+    t.date     "date_end"
+    t.date     "date_order"
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "campaign_dates", ["campaign_id"], name: "index_campaign_dates_on_campaign_id", using: :btree
+
+  create_table "campaigns", force: true do |t|
+    t.string   "name",       default: ""
+    t.integer  "year_start"
+    t.integer  "year_end"
+    t.integer  "status_id",  default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "competition_items", force: true do |t|
     t.string   "name",       default: ""
     t.datetime "created_at"
@@ -68,6 +116,51 @@ ActiveRecord::Schema.define(version: 20140626183323) do
 
   add_index "competitions", ["application_id"], name: "index_competitions_on_application_id", using: :btree
   add_index "competitions", ["competition_item_id"], name: "index_competitions_on_competition_item_id", using: :btree
+
+  create_table "competitive_group_items", force: true do |t|
+    t.integer  "competitive_group_id"
+    t.integer  "education_level_id",   default: 5
+    t.integer  "direction_id"
+    t.integer  "number_budget_o",      default: 0
+    t.integer  "number_budget_oz",     default: 0
+    t.integer  "number_budget_z",      default: 0
+    t.integer  "number_paid_o",        default: 0
+    t.integer  "number_paid_oz",       default: 0
+    t.integer  "number_paid_z",        default: 0
+    t.integer  "number_target_o",      default: 0
+    t.integer  "number_target_oz",     default: 0
+    t.integer  "number_target_z",      default: 0
+    t.integer  "number_quota_o",       default: 0
+    t.integer  "number_quota_oz",      default: 0
+    t.integer  "number_quota_z",       default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "competitive_group_items", ["competitive_group_id"], name: "index_competitive_group_items_on_competitive_group_id", using: :btree
+
+  create_table "competitive_group_target_items", force: true do |t|
+    t.integer  "target_organization_id"
+    t.integer  "education_level_id",     default: 5
+    t.integer  "number_target_o",        default: 0
+    t.integer  "number_target_oz",       default: 0
+    t.integer  "number_target_z",        default: 0
+    t.integer  "direction_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "competitive_group_target_items", ["target_organization_id"], name: "index_competitive_group_target_items_on_target_organization_id", using: :btree
+
+  create_table "competitive_groups", force: true do |t|
+    t.integer  "campaign_id"
+    t.integer  "course",      default: 1
+    t.string   "name",        default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "competitive_groups", ["campaign_id"], name: "index_competitive_groups_on_campaign_id", using: :btree
 
   create_table "education_document_types", force: true do |t|
     t.string   "name"
@@ -87,6 +180,40 @@ ActiveRecord::Schema.define(version: 20140626183323) do
 
   add_index "education_documents", ["application_id"], name: "index_education_documents_on_application_id", using: :btree
   add_index "education_documents", ["education_document_type_id"], name: "index_education_documents_on_education_document_type_id", using: :btree
+
+  create_table "education_forms", force: true do |t|
+    t.integer  "education_form_id", default: 11
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "education_levels", force: true do |t|
+    t.integer  "course",             default: 1
+    t.integer  "education_level_id", default: 5
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "entrance_test_items", force: true do |t|
+    t.integer  "entrance_test_type_id",  default: 1
+    t.string   "form",                   default: ""
+    t.integer  "min_score"
+    t.integer  "entrance_test_priority"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "entrance_test_subjects", force: true do |t|
+    t.integer  "subject_id"
+    t.string   "subject_name"
+    t.integer  "entrance_test_item_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "entrance_test_subjects", ["entrance_test_item_id"], name: "index_entrance_test_subjects_on_entrance_test_item_id", using: :btree
 
   create_table "identity_document_types", force: true do |t|
     t.string   "name"
@@ -122,5 +249,14 @@ ActiveRecord::Schema.define(version: 20140626183323) do
   end
 
   add_index "requests", ["query_id"], name: "index_requests_on_query_id", using: :btree
+
+  create_table "target_organizations", force: true do |t|
+    t.integer  "competitive_group_id"
+    t.string   "target_organization_name", default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "target_organizations", ["competitive_group_id"], name: "index_target_organizations_on_competitive_group_id", using: :btree
 
 end
