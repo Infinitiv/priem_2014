@@ -2,7 +2,7 @@ class Request < ActiveRecord::Base
   require 'builder'
   belongs_to :query
   
-  def self.data(method)
+  def self.data(method, params)
     case method
     when '/dictionary'
       data = ::Builder::XmlMarkup.new(indent: 2)
@@ -15,13 +15,13 @@ class Request < ActiveRecord::Base
         auth_data(root)
       end
     when '/validate'
-      data = Builder::XmlMarkup.new(indent: 2)
+      data = ::Builder::XmlMarkup.new(indent: 2)
       data.Root do |root|
         auth_data(root)
         data.PackageData do |pd|
-          campaign_info(pd) if params[:campaign_info]
-	  admission_info(pd) if params[:admission_info]
-	  applications(pd) if params[:applications]
+          campaign_info(pd, params) if params[:campaign_info]
+	  admission_info(pd, params) if params[:admission_info]
+	  applications(pd, params) if params[:applications]
         end
       end
     end
@@ -36,9 +36,9 @@ class Request < ActiveRecord::Base
     end
   end
   
-  def campaign_info(root)
-    campaign_info = Builder::XmlMarkup.new(indent: 2)
-    @c = Campaign.all
+  def self.campaign_info(root, params)
+    campaign_info = ::Builder::XmlMarkup.new(indent: 2)
+    @c = Campaign.where(id: params[:campaign_id])
     root.CampaignInfo do |ci|
       ci.Campaigns do |ca|
         @c.each do |cm|
@@ -82,9 +82,9 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def admission_info(root)
-    admission_info = Builder::XmlMarkup.new(indent: 2)
-    @c = AdmissionVolume.all
+  def self.admission_info(root, params)
+    admission_info = ::Builder::XmlMarkup.new(indent: 2)
+    @c = AdmissionVolume.where(campaign_id: params[:campaign_id])
     root.AdmissionInfo do |ai|
       ai.AdmissionVolume do |av|
 	@c.each do |cm|
@@ -103,14 +103,14 @@ class Request < ActiveRecord::Base
 	    i.NumberTargetO cm.number_target_o if cm.number_target_o
 	    i.NumberTargetOZ cm.number_target_oz if cm.number_target_oz
 	    i.NumberTargetZ cm.number_target_z if cm.number_target_z
-	    i.NumberTargetO cm.number_quota_o if cm.number_quota_o
-	    i.NumberTargetOZ cm.number_quota_oz if cm.number_quota_oz
-	    i.NumberTargetZ cm.number_quota_z if cm.number_quota_z	    
+	    i.NumberQuotaO cm.number_quota_o if cm.number_quota_o
+	    i.NumberQuotaOZ cm.number_quota_oz if cm.number_quota_oz
+	    i.NumberQuotaZ cm.number_quota_z if cm.number_quota_z	    
 	  end
 	end
       end
       ai.CompetitiveGroups do |cgs|
-	@c = CompetitiveGroup.all 
+	@c = CompetitiveGroup.where(campaign_id: params[:campaign_id]) 
 	@c.each do |cm|
 	  cgs.CompetitiveGroup do |cg|
 	    cg.UID cm.id
@@ -129,9 +129,9 @@ class Request < ActiveRecord::Base
 		  cgi.NumberPaidO cgim.number_paid_o if cgim.number_paid_o
 		  cgi.NumberPaidOZ cgim.number_paid_oz if cgim.number_paid_oz
 		  cgi.NumberPaidZ cgim.number_paid_z if cgim.number_paid_z
-		  cgi.NumberPaidO cgim.number_quota_o if cgim.number_quota_o
-		  cgi.NumberPaidOZ cgim.number_quota_oz if cgim.number_quota_oz
-		  cgi.NumberPaidZ cgim.number_quota_z if cgim.number_quota_z
+		  cgi.NumberQuotaO cgim.number_quota_o if cgim.number_quota_o
+		  cgi.NumberQuotaOZ cgim.number_quota_oz if cgim.number_quota_oz
+		  cgi.NumberQuotaZ cgim.number_quota_z if cgim.number_quota_z
 		end
 	      end
 	    end

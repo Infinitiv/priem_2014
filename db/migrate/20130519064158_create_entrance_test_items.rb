@@ -1,6 +1,7 @@
 class CreateEntranceTestItems < ActiveRecord::Migration
   def change
     create_table :entrance_test_items do |t|
+      t.references :competitive_group
       t.integer :entrance_test_type_id, default: 1
       t.string :form, default: ""
       t.integer :min_score

@@ -2,7 +2,7 @@
   .field
     - @campaigns.each do |campaign|
       = label_tag campaign.name 
-      = radio_button_tag('campaign', campaign.id)
+      = radio_button_tag('campaign_id', campaign.id)
       %br/
   .field
     = f.label 'Запрос'

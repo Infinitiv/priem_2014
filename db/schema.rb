@@ -197,6 +197,7 @@ ActiveRecord::Schema.define(version: 20140626183323) do
   end
 
   create_table "entrance_test_items", force: true do |t|
+    t.integer  "competitive_group_id"
     t.integer  "entrance_test_type_id",  default: 1
     t.string   "form",                   default: ""
     t.integer  "min_score"
