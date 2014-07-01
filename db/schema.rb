@@ -100,7 +100,10 @@ ActiveRecord::Schema.define(version: 20140626183323) do
   end
 
   create_table "competition_items", force: true do |t|
-    t.string   "name",       default: ""
+    t.string   "name",                      default: ""
+    t.integer  "finance_source_id"
+    t.integer  "competitive_group_id"
+    t.integer  "competitive_group_item_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
