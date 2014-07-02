@@ -158,3 +158,4 @@ EntranceTestItem.create(competitive_group_id: 4, entrance_test_type_id: 1, form:
 EntranceTestSubject.create(subject_id: 4, entrance_test_item_id: EntranceTestItem.last.id)
 EntranceTestItem.create(competitive_group_id: 4, entrance_test_type_id: 1, form: 'ЕГЭ', min_score: 36)
 EntranceTestSubject.create(subject_id: 11, entrance_test_item_id: EntranceTestItem.last.id)
+Application.create(id: 76)
