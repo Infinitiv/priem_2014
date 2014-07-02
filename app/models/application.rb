@@ -8,7 +8,7 @@ class Application < ActiveRecord::Base
     accessible_attributes = column_names
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
-    (2..spreadsheet.last_row).to_a.in_groups_of(100, false) do |group|
+    (2..spreadsheet.last_row).to_a.in_groups_of(10, false) do |group|
       ActiveRecord::Base.transaction do
         group.each do |i|
           row = Hash[[header, spreadsheet.row(i)].transpose]
@@ -39,6 +39,6 @@ class Application < ActiveRecord::Base
   end
   
   def summa
-    [russian, chemistry, biology].sum
+    [russian, chemistry, biology].compact.sum
   end 
 end
