@@ -42,4 +42,8 @@ class Application < ActiveRecord::Base
   def summa
     [russian, chemistry, biology].compact.sum
   end
+  
+  def errors = {}
+    
+  end
 end

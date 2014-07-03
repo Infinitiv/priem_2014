@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :applications do
     collection do
       post 'import'
+      get 'errors'
     end
   end
   # Example resource route with options:
