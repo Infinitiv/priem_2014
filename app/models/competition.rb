@@ -13,4 +13,10 @@ class Competition < ActiveRecord::Base
       competition.update_attributes(competition_item_id: competition_item.id, priority: row["c_#{competition_item.id}"]) if row["c_#{competition_item.id}"]
     end
   end
+  
+  def rank
+    marks = Competition.joins(:application).includes(:application).where(competition_item_id: competition_item_id, applications: {campaign_id: application.campaign_id}).map{|c| c.application.summa}.sort.reverse
+    marks_count = marks.count{|x| x == application.summa}
+    marks_count > 1 ? "#{marks.index(application.summa) + 1}-#{marks.index(application.summa) + 1 + marks_count}" : marks.index(application.summa) + 1
+  end
 end

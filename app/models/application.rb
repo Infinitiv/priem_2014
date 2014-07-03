@@ -1,5 +1,6 @@
 class Application < ActiveRecord::Base
   belongs_to :campaign
+  belongs_to :target_organization
   has_many :competitions
   has_many :identity_documents
   has_many :education_documents
@@ -40,5 +41,5 @@ class Application < ActiveRecord::Base
   
   def summa
     [russian, chemistry, biology].compact.sum
-  end 
+  end
 end
