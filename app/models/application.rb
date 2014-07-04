@@ -43,7 +43,22 @@ class Application < ActiveRecord::Base
     [russian, chemistry, biology].compact.sum
   end
   
-  def errors = {}
-    
+  def self.errors
+    errors = {}
+    Campaign.all.each do |campaign|
+      applications = campaign.applications
+      errors[campaign] = {}
+      errors[campaign][:dups_numbers] = find_dups_numbers(applications.map(&:application_number))
+      errors[campaign][:dups_entrants] = find_dups_entrants(IdentityDocument.joins(:application).where(applications: {id: applications.map(&:id)}).map{|d| "#{d.identity_document_series}#{d.identity_document_number}"})
+    end
+    errors
+  end
+  
+  def self.find_dups_numbers(array)
+    array.select{|i| array.count(i) > 1}
+  end
+  
+  def self.find_dups_entrants(array)
+    array.select{|i| array.count(i) > 1}
   end
 end
