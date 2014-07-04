@@ -15,4 +15,6 @@
     = label_tag 'applications', check_box_tag('applications') + 'Сведения о заявлениях', :class => "checkbox"
   %br
   .field
+    = text_area_tag :custom_request, nil, rows: 10, cols: 50
+  .field
     = f.submit 'Создать запрос', class: "btn btn-primary"
