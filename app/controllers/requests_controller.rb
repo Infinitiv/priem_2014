@@ -18,7 +18,7 @@ class RequestsController < ApplicationController
       when 'production' then url = '127.0.0.1:8080'
     end
     method = '/' + Query.find(params[:request][:query_id]).name
-    request = params[:custom_request] ? params[:custom_request] : Request.data(method, params)
+    request = !params[:custom_request].empty? ? params[:custom_request] : Request.data(method, params)
     uri = URI.parse('http://' + url + '/import/importservice.svc')
     http = Net::HTTP.new(uri.host, uri.port)
     headers = {'Content-Type' => 'text/xml'}
