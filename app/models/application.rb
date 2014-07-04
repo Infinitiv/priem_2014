@@ -13,7 +13,7 @@ class Application < ActiveRecord::Base
       ActiveRecord::Base.transaction do
         group.each do |i|
           row = Hash[[header, spreadsheet.row(i)].transpose]
-          application = find_by_application_number(row["application_number"]) || new
+          application = where(application_number: row["application_number"], campaign_id: row["campaign_id"]).first || new
           application.attributes = row.to_hash.slice(*accessible_attributes)
           if application.save!
             IdentityDocument.import_from_row(row, application)
