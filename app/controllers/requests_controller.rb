@@ -15,7 +15,7 @@ class RequestsController < ApplicationController
   def create
     case Rails.env
       when 'development' then url = 'priem.edu.ru:8000'
-      when 'production' then url = 'priem.edu.ru:8080'
+      when 'production' then url = '127.0.0.1:8080'
     end
     method = '/' + Query.find(params[:request][:query_id]).name
     request = Request.data(method, params)
