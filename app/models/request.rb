@@ -265,7 +265,7 @@ class Request < ActiveRecord::Base
 		fsef.CompetitiveGroupID competition.competition_item.competitive_group_id if competition.competition_item.competitive_group_id
 		fsef.CompetitiveGroupItemID competition.competition_item.competitive_group_item_id if competition.competition_item.competitive_group_item_id
 		fsef.Priority competition.priority
-		fsef.TargetOrganizationUID am.target_organization_id
+		fsef.TargetOrganizationUID am.target_organization_id if am.target_organization_id
 	      end
 	    end
 	  end
