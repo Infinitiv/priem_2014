@@ -1,4 +1,4 @@
-%h1= @application.fio
+%h1= "#{"%04d" % @application.application_number} #{@application.fio}"
 %h2 Перечень конкурсов
 %ol
   - @application.competitions.order(:priority).each do |competition|
