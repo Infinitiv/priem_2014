@@ -1,7 +1,9 @@
+#encoding: utf-8
 class Application < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :target_organization
   has_many :competitions
+  has_many :competition_items, through: :competitions
   has_many :identity_documents
   has_many :education_documents
 
@@ -50,6 +52,7 @@ class Application < ActiveRecord::Base
       errors[campaign] = {}
       errors[campaign][:dups_numbers] = find_dups_numbers(applications.map(&:application_number))
       errors[campaign][:dups_entrants] = find_dups_entrants(IdentityDocument.joins(:application).where(applications: {id: applications.map(&:id)}).map{|d| "#{d.identity_document_series}#{d.identity_document_number}"})
+      errors[campaign][:empty_target_entrants] = find_empty_target_entrants(applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%"), applications.select(:id).where("target_organization_id like ?", "%"))
     end
     errors
   end
@@ -60,5 +63,9 @@ class Application < ActiveRecord::Base
   
   def self.find_dups_entrants(array)
     array.select{|i| array.count(i) > 1}
+  end
+  
+  def self.find_empty_target_entrants(competitions_array, target_organizations_array)
+    (competitions_array - target_organizations_array).sort
   end
 end

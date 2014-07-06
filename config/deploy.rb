@@ -42,7 +42,7 @@ namespace :deploy do
       # Your restart mechanism here, for example:
       # execute :touch, release_path.join('tmp/restart.txt')
       set :password, 'user'
-      execute "service thin restart"
+      execute :sudo, "service thin restart"
     end
   end
 

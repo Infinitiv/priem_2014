@@ -10,6 +10,10 @@ before_action :set_application, only: [:show]
     Application.import(params[:file])
     redirect_to applications_url, notice: "Applications imported."
   end
+  def errors
+    @errors = Application.errors
+    @campaigns = Campaign.all
+  end
 
   private
 
