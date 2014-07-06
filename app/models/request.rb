@@ -418,7 +418,7 @@ class Request < ActiveRecord::Base
 	      if am.chemistry
 		etrs.EntranceTestResult do |etr|
 		  etr.UID 1.to_s + am.application_number.to_s + 2014.to_s + "chemistry"
-		  etr.ResultValue am.biology
+		  etr.ResultValue am.chemistry
 		  etr.ResultSourceTypeID 1
 		  etr.EntranceTestSubject do |ets|
 		    ets.SubjectID 11
