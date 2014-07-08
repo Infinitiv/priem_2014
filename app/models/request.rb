@@ -4,6 +4,12 @@ class Request < ActiveRecord::Base
   
   def self.data(method, params)
     case method
+    when '/checkapplication/single'
+      data = ::Builder::XmlMarkup.new(indent: 2)
+      data.Root do |root|
+        auth_data(root)
+	application_info(root, params) if params[:application_id]
+      end
     when '/dictionary'
       data = ::Builder::XmlMarkup.new(indent: 2)
       data.Root do |root|
@@ -481,6 +487,14 @@ class Request < ActiveRecord::Base
 	  a.RegistrationDate am.registration_date.to_datetime.to_s.gsub('+00:00', '')
 	end
       end
+    end
+  end
+  
+  def self.application_info(root, params)
+    a = Application.find(params[:application_id])
+    root.CheckApp do |ca|
+      ca.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
+      ca.RegistrationDate a.registration_date.to_datetime.to_s
     end
   end
 end
