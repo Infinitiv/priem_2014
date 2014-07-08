@@ -3,8 +3,9 @@
 - @campaigns.each do |campaign|
   %h3= campaign.name unless @errors[campaign][:dups_numbers].empty?
   %ul
-    - @errors[campaign][:dups_numbers].each do |application|
-      %li= link_to "%04d" % application.application_number, application_path(application)
+    - @errors[campaign][:dups_numbers].each do |applications|
+      - applications.each do |application|
+        %li= link_to "%04d" % application.application_number, application_path(application)
 %h2 Пропущенные целевики
 - @campaigns.each do |campaign|
   %h3= campaign.name unless @errors[campaign][:empty_target_entrants].empty?

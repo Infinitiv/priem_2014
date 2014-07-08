@@ -50,15 +50,18 @@ class Application < ActiveRecord::Base
     Campaign.all.each do |campaign|
       applications = campaign.applications
       errors[campaign] = {}
-      errors[campaign][:dups_numbers] = find_dups_numbers(applications.map(&:application_number))
+      errors[campaign][:dups_numbers] = find_dups_numbers(applications)
       errors[campaign][:dups_entrants] = find_dups_entrants(IdentityDocument.joins(:application).where(applications: {id: applications.map(&:id)}).map{|d| "#{d.identity_document_series}#{d.identity_document_number}"})
       errors[campaign][:empty_target_entrants] = find_empty_target_entrants(applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%"), applications.select(:id).where("target_organization_id like ?", "%"))
     end
     errors
   end
   
-  def self.find_dups_numbers(array)
-    array.select{|i| array.count(i) > 1}
+  def self.find_dups_numbers(applications)
+    find_dups_numbers = []
+    h = applications.group(:application_number).count.select{|k, v| v > 1}
+    h.each{|k, v| find_dups_numbers << Application.where(application_number: k)}
+    find_dups_numbers
   end
   
   def self.find_dups_entrants(array)
