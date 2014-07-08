@@ -6,6 +6,8 @@
     - @errors[campaign][:dups_numbers].each do |applications|
       - applications.each do |application|
         %li= link_to "%04d" % application.application_number, application_path(application)
+  %h2= "Пропущенные номера заявлений" unless @errors[campaign][:lost_numbers].empty?
+  %p= @errors[campaign][:lost_numbers].join(', ')
 %h2 Пропущенные целевики
 - @campaigns.each do |campaign|
   %h3= campaign.name unless @errors[campaign][:empty_target_entrants].empty?
