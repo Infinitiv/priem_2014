@@ -431,7 +431,7 @@ class Request < ActiveRecord::Base
 	  end
 	end
 	a.ApplicationDocuments do |ad|
-	  im = am.identity_documents.first
+	  im = am.identity_documents.last
 	    ad.IdentityDocument do |id|
 	      id.OriginalReceived true
 	      id.DocumentSeries im.identity_document_series if im.identity_document_series
@@ -442,7 +442,7 @@ class Request < ActiveRecord::Base
 	      id.BirthDate am.birth_date
 	    end
 	    ad.EduDocuments do |eds|
-	      em = am.education_documents.first
+	      em = am.education_documents.last
 	      eds.EduDocument do |ed|
 		if em.education_document_type_id == 1
 		  ed.SchoolCertificateDocument do |scd|
