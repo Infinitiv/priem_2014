@@ -1,4 +1,12 @@
-%h1= "#{"%04d" % @application.application_number} #{@application.fio}"
+- case
+  - when @application.last_deny_day
+    - label_class = "label label-danger"
+  - when @application.original_received_date
+    - label_class = "label label-success"
+  - else
+    - label_class = "label label-default"
+%h1.pull-left{:class => label_class}= "#{"%04d" % @application.application_number}"
+%h1= @application.fio
 %h2 Перечень конкурсов
 %ol
   - @application.competitions.order(:priority).each do |competition|

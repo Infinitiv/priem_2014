@@ -12,8 +12,15 @@
     %th Действия с заявлением
   %tbody
   - @applications.each do |application|
+    - case
+      - when application.last_deny_day
+        - label_class = "label label-danger"
+      - when application.original_received_date
+        - label_class = "label label-success"
+      - else
+        - label_class = "label label-default"
     %tr
-      %td= link_to application.application_number, application_path(application)
+      %td= link_to "%04d" % application.application_number, application_path(application), class: label_class
       %td= application.fio
       %td= application.summa
       %td
