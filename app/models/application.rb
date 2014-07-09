@@ -78,4 +78,34 @@ class Application < ActiveRecord::Base
   def self.find_empty_target_entrants(competitions_array, target_organizations_array)
     (competitions_array - target_organizations_array).sort
   end
+  
+  def self.competition(applications, admission_volume)
+    applications_hash = {}
+    applications.each do |application|
+      competitions_hash = {}
+      application.competitions.order(:priority).each{|competition| competitions_hash[competition.competition_item_id] = competition.priority}
+      applications_hash[application] = {}
+      applications_hash[application][:summa] = application.summa
+      applications_hash[application][:competitions] = competitions_hash
+      applications_hash[application][:enrolled] = false
+    end
+    admission_volume_hash = {}
+    admission_volume.each do |av|
+      admission_volume_hash[av.direction_id] = {}
+      admission_volume_hash[av.direction_id][:number_budget_o] = av.number_budget_o
+      admission_volume_hash[av.direction_id][:number_paid_o] = av.number_paid_o
+      admission_volume_hash[av.direction_id][:number_target_o] = av.number_target_o
+      admission_volume_hash[av.direction_id][:number_quota_o] = av.number_quota_o
+    end
+    applications_hash.select{|k, v| v[:competitions][10]}.first(admission_volume_hash[438][:number_quota_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][10]}; v[:enrolled] = 10}
+    admission_volume_hash[438][:number_budget_o] = admission_volume_hash[438][:number_budget_o] + admission_volume_hash[438][:number_quota_o] - applications_hash.select{|k, v| v[:enrolled] == 10}.count
+    applications_hash.select{|k, v| v[:competitions][11]}.first(admission_volume_hash[441][:number_quota_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][11]}; v[:enrolled] = 11}
+    admission_volume_hash[441][:number_budget_o] = admission_volume_hash[441][:number_budget_o] + admission_volume_hash[441][:number_quota_o] - applications_hash.select{|k, v| v[:enrolled] == 11}.count
+    admission_volume_hash[470][:number_budget_o] = admission_volume_hash[470][:number_budget_o] + admission_volume_hash[470][:number_quota_o] - applications_hash.select{|k, v| v[:enrolled] == 12}.count
+    applications_hash.select{|k, v| v[:competitions][12]}.first(admission_volume_hash[470][:number_quota_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][12]}; v[:enrolled] = 12}
+    applications_hash.select{|k, v| v[:competitions][7]}.first(admission_volume_hash[438][:number_target_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][7]}; v[:enrolled] = 7}
+    applications_hash.select{|k, v| v[:competitions][8]}.first(admission_volume_hash[441][:number_target_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][8]}; v[:enrolled] = 8}
+    applications_hash.select{|k, v| v[:competitions][9]}.first(admission_volume_hash[470][:number_target_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][9]}; v[:enrolled] = 9}
+    applications_hash
+  end
 end

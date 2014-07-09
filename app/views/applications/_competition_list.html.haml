@@ -1,0 +1,3 @@
+%ol
+  - @applications_hash.select{|k, v| v[:enrolled] == competitive_item_id}.each do |k, v|
+    %li= link_to "#{"%04d" % k.application_number} #{k.fio} #{k.summa}", application_path(k)

@@ -16,7 +16,9 @@ before_action :set_application, only: [:show]
   end
   
   def competition
-    
+    @applications = Application.includes(:competitions).where(campaign_id: 2, last_deny_day: nil).sort_by(&:summa).reverse
+    @admission_volumes = AdmissionVolume.where(campaign_id: 2)
+    @applications_hash = Application.competition(@applications, @admission_volumes)
   end
 
   private
