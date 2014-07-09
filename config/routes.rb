@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     collection do
       post 'import'
       get 'errors'
+      get 'competition'
     end
   end
   # Example resource route with options:

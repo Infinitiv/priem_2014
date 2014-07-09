@@ -14,6 +14,10 @@ before_action :set_application, only: [:show]
     @errors = Application.errors
     @campaigns = Campaign.all
   end
+  
+  def competition
+    
+  end
 
   private
 
