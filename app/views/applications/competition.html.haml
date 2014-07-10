@@ -12,3 +12,32 @@
 = render partial: 'competition_list', locals: {competitive_item_id: 8}
 %h2 Стоматология
 = render partial: 'competition_list', locals: {competitive_item_id: 9}
+%h1 Ожидаемое зачисление по общему конкурсу
+%h2 Лечебное дело
+= render partial: 'competition_list', locals: {competitive_item_id: 1}
+%h2 Педиатрия
+= render partial: 'competition_list', locals: {competitive_item_id: 2}
+%h2 Стоматология
+= render partial: 'competition_list', locals: {competitive_item_id: 3}
+%h1 Ожидаемое зачисление на места с оплатой стоимости обучения
+%h2 Лечебное дело
+= render partial: 'competition_list', locals: {competitive_item_id: 4}
+%h2 Педиатрия
+= render partial: 'competition_list', locals: {competitive_item_id: 5}
+%h2 Стоматология
+= render partial: 'competition_list', locals: {competitive_item_id: 6}
+%p= @applications_hash.count
+%table.table
+  %thead
+    %tr
+      %th Номер дела
+      %th Сумма баллов
+      %th Куда зачислен
+      %th Оставшиеся приоритеты
+  %tbody
+    - @applications_hash.each do |k, v|
+      %tr
+        %td= "%04d" % k.application_number
+        %td= k.summa
+        %td= v[:enrolled]
+        %td= v[:competitions]

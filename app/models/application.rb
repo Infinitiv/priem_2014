@@ -83,7 +83,7 @@ class Application < ActiveRecord::Base
     applications_hash = {}
     applications.each do |application|
       competitions_hash = {}
-      application.competitions.order(:priority).each{|competition| competitions_hash[competition.competition_item_id] = competition.priority}
+      application.competitions.order(priority: :desc).each{|competition| competitions_hash[competition.competition_item_id] = competition.priority}
       applications_hash[application] = {}
       applications_hash[application][:summa] = application.summa
       applications_hash[application][:competitions] = competitions_hash
@@ -97,15 +97,102 @@ class Application < ActiveRecord::Base
       admission_volume_hash[av.direction_id][:number_target_o] = av.number_target_o
       admission_volume_hash[av.direction_id][:number_quota_o] = av.number_quota_o
     end
-    applications_hash.select{|k, v| v[:competitions][10]}.first(admission_volume_hash[438][:number_quota_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][10]}; v[:enrolled] = 10}
-    admission_volume_hash[438][:number_budget_o] = admission_volume_hash[438][:number_budget_o] + admission_volume_hash[438][:number_quota_o] - applications_hash.select{|k, v| v[:enrolled] == 10}.count
-    applications_hash.select{|k, v| v[:competitions][11]}.first(admission_volume_hash[441][:number_quota_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][11]}; v[:enrolled] = 11}
-    admission_volume_hash[441][:number_budget_o] = admission_volume_hash[441][:number_budget_o] + admission_volume_hash[441][:number_quota_o] - applications_hash.select{|k, v| v[:enrolled] == 11}.count
-    admission_volume_hash[470][:number_budget_o] = admission_volume_hash[470][:number_budget_o] + admission_volume_hash[470][:number_quota_o] - applications_hash.select{|k, v| v[:enrolled] == 12}.count
-    applications_hash.select{|k, v| v[:competitions][12]}.first(admission_volume_hash[470][:number_quota_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][12]}; v[:enrolled] = 12}
-    applications_hash.select{|k, v| v[:competitions][7]}.first(admission_volume_hash[438][:number_target_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][7]}; v[:enrolled] = 7}
-    applications_hash.select{|k, v| v[:competitions][8]}.first(admission_volume_hash[441][:number_target_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][8]}; v[:enrolled] = 8}
-    applications_hash.select{|k, v| v[:competitions][9]}.first(admission_volume_hash[470][:number_target_o]).each{|k, v| v[:competitions].delete_if{|key, value| value > v[:competitions][9]}; v[:enrolled] = 9}
+    competitions = {}
+    competitions[1] = admission_volume_hash[438][:number_budget_o]
+    competitions[2] = admission_volume_hash[441][:number_budget_o]
+    competitions[3] = admission_volume_hash[470][:number_budget_o]
+    competitions[4] = admission_volume_hash[438][:number_paid_o]
+    competitions[5] = admission_volume_hash[441][:number_paid_o]
+    competitions[6] = admission_volume_hash[470][:number_paid_o]
+    competitions[7] = admission_volume_hash[438][:number_target_o]
+    competitions[8] = admission_volume_hash[441][:number_target_o]
+    competitions[9] = admission_volume_hash[470][:number_target_o]
+    competitions[10] = admission_volume_hash[438][:number_quota_o]
+    competitions[11] = admission_volume_hash[441][:number_quota_o]
+    competitions[12] = admission_volume_hash[470][:number_quota_o]
+    applications_hash.select{|k, v| v[:competitions][13]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[1] > 0
+          competitions[1] -= 1
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
+          v[:enrolled] = 1
+          v[:competitions].delete_if{|key, value| value > v[:competitions][1]}
+        end
+      end
+    end
+    applications_hash.select{|k, v| v[:competitions][14]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[2] > 0
+          competitions[2] -= 1
+          competitions[v[:enrolled]] if v[:enrolled] != false
+          v[:enrolled] = 2
+          v[:competitions].delete_if{|key, value| value > v[:competitions][2]}
+        end
+      end
+    end
+    applications_hash.select{|k, v| v[:competitions][15]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[3] > 0
+          competitions[3] -= 1
+          competitions[v[:enrolled]] if v[:enrolled] != false
+          v[:enrolled] = 3
+          v[:competitions].delete_if{|key, value| value > v[:competitions][3]}
+        end
+      end
+    end
+    applications_hash.select{|k, v| v[:competitions][16]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[4] > 0
+          competitions[4] -= 1
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
+          v[:enrolled] = 4
+          v[:competitions].delete_if{|key, value| value > v[:competitions][4]}
+        end
+      end
+    end
+    applications_hash.select{|k, v| v[:competitions][17]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[5] > 0
+          competitions[5] -= 1
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
+          v[:enrolled] = 5
+          v[:competitions].delete_if{|key, value| value > v[:competitions][5]}
+        end
+      end
+    end
+    applications_hash.select{|k, v| v[:competitions][18]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[6] > 0
+          competitions[6] -= 1
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
+          v[:enrolled] = 6
+          v[:competitions].delete_if{|key, value| value > v[:competitions][6]}
+        end
+      end
+    end
+    applications_hash.select{|k, v| !v[:competitions][13] || !v[:competitions][14] || !v[:competitions][15] || !v[:competitions][16] || !v[:competitions][17] || !v[:competitions][18]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[competition] > 0
+          competitions[competition] -= 1
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
+          v[:enrolled] = competition
+          v[:competitions].delete_if{|key, value| value > v[:competitions][competition]}
+        end
+      end
+    end
+    competitions[1] = competitions[10] + competitions[7]
+    competitions[2] = competitions[11] + competitions[8]
+    competitions[3] = competitions[12] + competitions[9]
+    applications_hash.select{|k, v| !v[:competitions][13] || !v[:competitions][14] || !v[:competitions][15] || !v[:competitions][16] || !v[:competitions][17] || !v[:competitions][18]}.each do |k, v|
+      v[:competitions].each do |competition, priority|
+        if competitions[competition] > 0
+          competitions[competition] -= 1
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
+          v[:enrolled] = competition
+          v[:competitions].delete_if{|key, value| value > v[:competitions][competition]}
+        end
+      end
+    end
     applications_hash
   end
 end
