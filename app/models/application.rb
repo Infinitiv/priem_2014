@@ -52,7 +52,7 @@ class Application < ActiveRecord::Base
       errors[campaign] = {}
       errors[campaign][:dups_numbers] = find_dups_numbers(applications)
       errors[campaign][:lost_numbers] = find_lost_numbers(applications)
-      errors[campaign][:dups_entrants] = find_dups_entrants(IdentityDocument.joins(:application).where(applications: {id: applications.map(&:id)}).map{|d| "#{d.identity_document_series}#{d.identity_document_number}"})
+      errors[campaign][:dups_entrants] = find_dups_entrants(IdentityDocument.joins(:application).map{|d| "#{d.identity_document_series}#{d.identity_document_number}"})
       errors[campaign][:empty_target_entrants] = find_empty_target_entrants(applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%"), applications.select(:id).where("target_organization_id like ?", "%"))
     end
     errors
@@ -116,7 +116,7 @@ class Application < ActiveRecord::Base
           competitions[1] -= 1
           competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = 1
-          v[:competitions].delete_if{|key, value| value > v[:competitions][1]}
+          v[:competitions].delete_if{|key, value| value > v[:competitions][13]}
         end
       end
     end
@@ -124,9 +124,9 @@ class Application < ActiveRecord::Base
       v[:competitions].each do |competition, priority|
         if competitions[2] > 0
           competitions[2] -= 1
-          competitions[v[:enrolled]] if v[:enrolled] != false
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = 2
-          v[:competitions].delete_if{|key, value| value > v[:competitions][2]}
+          v[:competitions].delete_if{|key, value| value > v[:competitions][14]}
         end
       end
     end
@@ -134,9 +134,9 @@ class Application < ActiveRecord::Base
       v[:competitions].each do |competition, priority|
         if competitions[3] > 0
           competitions[3] -= 1
-          competitions[v[:enrolled]] if v[:enrolled] != false
+          competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = 3
-          v[:competitions].delete_if{|key, value| value > v[:competitions][3]}
+          v[:competitions].delete_if{|key, value| value > v[:competitions][15]}
         end
       end
     end
@@ -146,7 +146,7 @@ class Application < ActiveRecord::Base
           competitions[4] -= 1
           competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = 4
-          v[:competitions].delete_if{|key, value| value > v[:competitions][4]}
+          v[:competitions].delete_if{|key, value| value > v[:competitions][16]}
         end
       end
     end
@@ -156,7 +156,7 @@ class Application < ActiveRecord::Base
           competitions[5] -= 1
           competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = 5
-          v[:competitions].delete_if{|key, value| value > v[:competitions][5]}
+          v[:competitions].delete_if{|key, value| value > v[:competitions][17]}
         end
       end
     end
@@ -166,13 +166,13 @@ class Application < ActiveRecord::Base
           competitions[6] -= 1
           competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = 6
-          v[:competitions].delete_if{|key, value| value > v[:competitions][6]}
+          v[:competitions].delete_if{|key, value| value > v[:competitions][18]}
         end
       end
     end
-    applications_hash.select{|k, v| !v[:competitions][13] || !v[:competitions][14] || !v[:competitions][15] || !v[:competitions][16] || !v[:competitions][17] || !v[:competitions][18]}.each do |k, v|
+    applications_hash.each do |k, v|
       v[:competitions].each do |competition, priority|
-        if competitions[competition] > 0
+        if  !(13..18).to_a.include?(competition) && competitions[competition] > 0
           competitions[competition] -= 1
           competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = competition
@@ -183,9 +183,9 @@ class Application < ActiveRecord::Base
     competitions[1] = competitions[10] + competitions[7]
     competitions[2] = competitions[11] + competitions[8]
     competitions[3] = competitions[12] + competitions[9]
-    applications_hash.select{|k, v| !v[:competitions][13] || !v[:competitions][14] || !v[:competitions][15] || !v[:competitions][16] || !v[:competitions][17] || !v[:competitions][18]}.each do |k, v|
+    applications_hash.each do |k, v|
       v[:competitions].each do |competition, priority|
-        if competitions[competition] > 0
+        if  !(13..18).to_a.include?(competition) && competitions[competition] > 0
           competitions[competition] -= 1
           competitions[v[:enrolled]] += 1 if v[:enrolled] != false
           v[:enrolled] = competition
