@@ -14,4 +14,8 @@ class IdentityDocument < ActiveRecord::Base
   def identity_document_data
     "Серия #{identity_document_series} номер #{identity_document_number}, выдан #{identity_document_date}"
   end
+  
+  def sn
+    [identity_document_series, identity_document_number].compact.join('')
+  end
 end

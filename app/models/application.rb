@@ -48,11 +48,11 @@ class Application < ActiveRecord::Base
   def self.errors
     errors = {}
     Campaign.all.each do |campaign|
-      applications = campaign.applications
+      applications = campaign.applications.includes(:identity_documents)
       errors[campaign] = {}
       errors[campaign][:dups_numbers] = find_dups_numbers(applications)
       errors[campaign][:lost_numbers] = find_lost_numbers(applications)
-      errors[campaign][:dups_entrants] = find_dups_entrants(IdentityDocument.joins(:application).map{|d| "#{d.identity_document_series}#{d.identity_document_number}"})
+      errors[campaign][:dups_entrants] = find_dups_entrants(applications)
       errors[campaign][:empty_target_entrants] = find_empty_target_entrants(applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%"), applications.select(:id).where("target_organization_id like ?", "%"))
     end
     errors
@@ -71,8 +71,14 @@ class Application < ActiveRecord::Base
     max_number ? (1..max_number).to_a - application_numbers : []
   end
   
-  def self.find_dups_entrants(array)
-    array.select{|i| array.count(i) > 1}
+  def self.find_dups_entrants(applications)
+    find_dups_entrants = {}
+    applications.each do |a|
+      sn = a.identity_documents.last.sn
+      find_dups_entrants[sn] ||= []
+      find_dups_entrants[sn] << a
+    end
+    find_dups_entrants.select{|k, v| v.count > 1}
   end
   
   def self.find_empty_target_entrants(competitions_array, target_organizations_array)
