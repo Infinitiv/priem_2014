@@ -48,12 +48,14 @@ class Application < ActiveRecord::Base
   def self.errors
     errors = {}
     Campaign.all.each do |campaign|
-      applications = campaign.applications.includes(:identity_documents)
+      applications = campaign.applications.includes([:identity_documents, :competitions])
+      target_competition_entrants_array = applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%")
       errors[campaign] = {}
       errors[campaign][:dups_numbers] = find_dups_numbers(applications)
       errors[campaign][:lost_numbers] = find_lost_numbers(applications)
       errors[campaign][:dups_entrants] = find_dups_entrants(applications)
-      errors[campaign][:empty_target_entrants] = find_empty_target_entrants(applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%"), applications.select(:id).where("target_organization_id like ?", "%"))
+      errors[campaign][:empty_target_entrants] = find_empty_target_entrants(target_competition_entrants_array, applications.select(:id).where("target_organization_id like ?", "%"))
+      errors[campaign][:not_original_target_entrants] = find_not_original_target_entrants(target_competition_entrants_array, applications.select(:id).where.not(original_received_date: nil))
     end
     errors
   end
@@ -81,8 +83,12 @@ class Application < ActiveRecord::Base
     find_dups_entrants.select{|k, v| v.count > 1}
   end
   
-  def self.find_empty_target_entrants(competitions_array, target_organizations_array)
-    (competitions_array - target_organizations_array).sort
+  def self.find_empty_target_entrants(target_competition_entrants_array, target_organizations_array)
+    (target_competition_entrants_array - target_organizations_array).sort
+  end
+                                                                                         
+  def self.find_not_original_target_entrants(target_competition_entrants_array, original_received_array)
+    (target_competition_entrants_array - original_received_array).sort
   end
   
   def self.competition(applications, admission_volume)

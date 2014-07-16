@@ -13,6 +13,11 @@
     - @errors[campaign][:empty_target_entrants].each do |application_id|
       - application = Application.find(application_id)
       %li= link_to "%04d" % application.application_number, application_path(application)
+  %h2= "Целевики без оригиналов" unless @errors[campaign][:not_original_target_entrants].empty?
+  %ul
+    - @errors[campaign][:not_original_target_entrants].each do |application_id|
+      - application = Application.find(application_id)
+      %li= link_to "%04d" % application.application_number, application_path(application)
   %h2= "Повторяющиеся абитуриенты" unless @errors[campaign][:dups_entrants].empty?
   %ul
     - @errors[campaign][:dups_entrants].each do |k, v|
