@@ -45,6 +45,14 @@ class Application < ActiveRecord::Base
     [russian, chemistry, biology].compact.sum
   end
   
+  def self.ege_to_txt(applications)
+    ege_to_txt = ""
+    applications.each do |application|
+      ege_to_txt += "#{[application.entrant_last_name, application.entrant_first_name, application.entrant_middle_name].compact.join('%')}%#{[application.identity_documents.last.identity_document_series, application.identity_documents.last.identity_document_number].compact.join('%')}\r\n"
+    end
+    ege_to_txt
+  end
+  
   def self.errors
     errors = {}
     Campaign.all.each do |campaign|

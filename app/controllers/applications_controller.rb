@@ -16,9 +16,15 @@ before_action :set_application, only: [:show]
   end
   
   def competition
-    @applications = Application.includes(:competitions).where(campaign_id: 2, last_deny_day: nil).sort_by{|a| [a.summa, a.chemistry, a.biology, a.russian]}.reverse
+    @applications = Application.includes(:competitions).where(campaign_id: 2, last_deny_day: nil, inner_exam: false).sort_by{|a| [a.summa, a.chemistry, a.biology, a.russian]}.reverse
     @admission_volume = AdmissionVolume.where(campaign_id: 2)
     @applications_hash = Application.competition(@applications, @admission_volume)
+  end
+  
+  def ege_to_txt
+    applications = Application.includes(:identity_documents).where(campaign_id: 2, last_deny_day: nil)
+    ege_to_txt = Application.ege_to_txt(applications)
+    send_data ege_to_txt, :filename => "ege #{Time.now.to_date}", :type => 'text/plain', :disposition => "attachment"
   end
 
   private

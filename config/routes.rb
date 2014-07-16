@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       post 'import'
       get 'errors'
       get 'competition'
+      get 'ege_to_txt'
     end
   end
   # Example resource route with options:
