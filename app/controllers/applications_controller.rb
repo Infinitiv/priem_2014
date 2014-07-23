@@ -22,9 +22,9 @@ before_action :set_application, only: [:show]
   end
   
   def ege_to_txt
-    applications = Application.includes(:identity_documents).where(campaign_id: 2, last_deny_day: nil)
+    applications = Application.includes(:identity_documents).where(campaign_id: 2, last_deny_day: nil, inner_exam: false)
     ege_to_txt = Application.ege_to_txt(applications)
-    send_data ege_to_txt, :filename => "ege #{Time.now.to_date}", :type => 'text/plain', :disposition => "attachment"
+    send_data ege_to_txt, :filename => "ege #{Time.now.to_date}.csv", :type => 'text/plain', :disposition => "attachment"
   end
 
   private
