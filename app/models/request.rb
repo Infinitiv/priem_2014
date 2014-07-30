@@ -514,6 +514,30 @@ class Request < ActiveRecord::Base
     end
   end
   
+  def self.orders_of_admission(root, params)
+    orders_of_admission = ::Builder::XmlMarkup.new(indent: 2)
+    order_dates = {}
+    CampaignDate.where(campaign_id: params[:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
+    as = Application.joins(:competitions).where(campaign_id: params[:campaign_id]).where.not(competitions: {admission_date: nil})
+    root.OrdersOfAdmission do |ooas|
+      as.each do |a|
+        ooas.OrderOfAdmission do |ooa|
+          ooa.Application do |am|
+            am.ApplicationNumber a.application_number
+            am.RegistrationDate a.registration_date.to_datetime
+          end
+          c = a.competitions.where.not(admission_date: nil).first
+          ooa.DirectionID c.competition_item.competitive_group_item.direction_id
+          ooa.EducationFormID 11
+          ooa.FinanceSourceID c.competition_item.finance_source_id
+          ooa.EducationLevelID 5
+          ooa.Stage order_dates[c.admission_date] if order_dates[c.admission_date]
+          ooa.IsBeneficiary (13..15).to_a.include?(c.competition_item_id) ? true : false 
+        end
+      end
+    end
+  end
+  
   def self.applications_del(root, params)
     applications_del = ::Builder::XmlMarkup.new(indent: 2)
     @a = Application.where(campaign_id: params[:campaign_id])
