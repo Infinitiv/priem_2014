@@ -2,7 +2,7 @@ class ApplicationsController < ApplicationController
 before_action :set_application, only: [:show]
   def index
     last_campaign = Campaign.last
-    @applications = Application.order(:application_number).where(campaign_id: last_campaign).paginate(page: params[:page])
+    @applications = Application.order(:application_number).where(campaign_id: last_campaign)
   end
   def show
   end
