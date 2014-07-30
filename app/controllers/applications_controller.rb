@@ -10,6 +10,12 @@ before_action :set_application, only: [:show]
     Application.import(params[:file])
     redirect_to applications_url, notice: "Applications imported."
   end
+  
+  def import_recommended
+    Application.import_recommended(params[:file])
+    redirect_to applications_url, notice: "Recommended imported."
+  end
+  
   def errors
     @errors = Application.errors
     @campaigns = Campaign.all

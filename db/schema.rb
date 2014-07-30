@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140626183323) do
+ActiveRecord::Schema.define(version: 20140730063125) do
 
   create_table "admission_volumes", force: true do |t|
     t.integer  "campaign_id"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 20140626183323) do
     t.date     "admission_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "recommended_date"
   end
 
   add_index "competitions", ["application_id"], name: "index_competitions_on_application_id", using: :btree
@@ -246,8 +247,8 @@ ActiveRecord::Schema.define(version: 20140626183323) do
 
   create_table "requests", force: true do |t|
     t.integer  "query_id"
-    t.text     "input"
-    t.text     "output"
+    t.text     "input",      limit: 16777215
+    t.text     "output",     limit: 16777215
     t.datetime "created_at"
     t.datetime "updated_at"
   end

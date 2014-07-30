@@ -14,6 +14,8 @@
       = competition.competition_item.name
       = " (#{@application.target_organization.target_organization_name})" if [7, 8, 9].include?(competition.competition_item_id) && @application.target_organization_id
       = "- место в конкурсе - #{competition.rank}"
+      %span.label.label-info= "рекомендован к зачислению #{competition.recommended_date}" if competition.recommended_date
+      %span.label.label-success= "зачислен #{competition.admission_date}" if competition.admission_date
 %h2 Конкурсные баллы
 %table.table
   %thead

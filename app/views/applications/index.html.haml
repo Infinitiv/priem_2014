@@ -3,6 +3,10 @@
   = file_field_tag :file
   %br/
   = submit_tag "Загрузить заявления", class: "btn btn-primary"
+= form_tag import_recommended_applications_path, multipart: true do
+  = file_field_tag :file
+  %br/
+  = submit_tag "Загрузить рекомендованных", class: "btn btn-primary"
 = will_paginate @applications
 %table.table
   %thead

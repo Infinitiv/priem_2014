@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :applications do
     collection do
       post 'import'
+      post 'import_recommended'
       get 'errors'
       get 'competition'
       get 'ege_to_txt'
