@@ -28,6 +28,8 @@ class Request < ActiveRecord::Base
           campaign_info(pd, params) if params[:campaign_info]
 	  admission_info(pd, params) if params[:admission_info]
 	  applications(pd, params) if params[:applications]
+          recommended_lists(pd, params) if params[:recommended_lists]
+          orders_of_admission(pd, params) if params[:orders_of_admission]
         end
       end
     when '/import'
@@ -38,6 +40,8 @@ class Request < ActiveRecord::Base
           campaign_info(pd, params) if params[:campaign_info]
 	  admission_info(pd, params) if params[:admission_info]
 	  applications(pd, params) if params[:applications]
+          recommended_lists(pd, params) if params[:recommended_lists]
+          orders_of_admission(pd, params) if params[:orders_of_admission]
         end
       end
     when '/delete'
@@ -469,6 +473,43 @@ class Request < ActiveRecord::Base
 	    end
 	  end
       end
+      end
+    end
+  end
+  
+  def self.recommended_lists(root, params)
+    recommended_lists = ::Builder::XmlMarkup.new(indent: 2)
+    order_dates = {}
+    CampaignDate.where(campaign_id: params[:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
+    root.RecommendedLists do |rls|
+      order_dates.each do |date, stage|
+        as = Application.joins(:competitions).where(campaign_id: params[:campaign_id], competitions: {recommended_date: date})
+        unless as.empty?
+          rls.RecommendedList do |rl|
+            rl.Stage stage
+            rl.RecLists do |recls|
+              as.each do |a|
+                recls.RecList do |recl|
+                  recl.Application do |am|
+                    am.ApplicationNumber a.application_number
+                    am.RegistrationDate a.registration_date.to_datetime
+                  end
+                  recl.FinSourceAndEduForms do |fsaefs|
+                    cs = a.competitions.where(recommended_date: date)
+                    cs.each do |c|
+                      fsaefs.FinSourceEduForm do |fsaef|
+                        fsaef.EducationalLevelID 5
+                        fsaef.EducationFormID 11
+                        fsaef.CompetitiveGroupID c.competition_item.competitive_group_item.competitive_group_id
+                        fsaef.DirectionID c.competition_item.competitive_group_item.direction_id
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
       end
     end
   end

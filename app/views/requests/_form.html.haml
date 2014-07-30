@@ -13,6 +13,8 @@
     = label_tag 'admission_info', check_box_tag('admission_info') + 'Сведения об объеме и структуре приема', :class => "checkbox"
     = label_tag 'application', check_box_tag('application') + 'Сведения о заявлении', :class => "checkbox"
     = label_tag 'applications', check_box_tag('applications') + 'Сведения о заявлениях', :class => "checkbox"
+    = label_tag 'recommended_lists', check_box_tag('recommended_lists') + 'Сведения о рекомендованных к зачислению', :class => "checkbox"
+    = label_tag 'orders_of_admission', check_box_tag('orders_of_admission') + 'Сведения о зачисленных', :class => "checkbox"
   %br
   .field
     = text_area_tag :custom_request, nil, rows: 10, cols: 50
