@@ -529,7 +529,7 @@ class Request < ActiveRecord::Base
               as.each do |a|
                 recls.RecList do |recl|
                   recl.Application do |am|
-                    am.ApplicationNumber a.application_number
+                    am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
                     am.RegistrationDate a.registration_date.to_datetime
                   end
                   recl.FinSourceAndEduForms do |fsaefs|
@@ -561,7 +561,7 @@ class Request < ActiveRecord::Base
       as.each do |a|
         ooas.OrderOfAdmission do |ooa|
           ooa.Application do |am|
-            am.ApplicationNumber a.application_number
+            am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
             am.RegistrationDate a.registration_date.to_datetime
           end
           c = a.competitions.where.not(admission_date: nil).first
