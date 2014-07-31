@@ -570,7 +570,7 @@ class Request < ActiveRecord::Base
           ooa.FinanceSourceID c.competition_item.finance_source_id
           ooa.EducationLevelID 5
           ooa.Stage order_dates[c.admission_date] if order_dates[c.admission_date]
-          ooa.IsBeneficiary (13..15).to_a.include?(c.competition_item_id) ? true : false 
+          ooa.IsBeneficiary (10..12).to_a.include?(c.competition_item_id) ? true : false 
         end
       end
     end
