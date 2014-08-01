@@ -485,10 +485,10 @@ class Request < ActiveRecord::Base
       order_dates.each do |date, stage|
         as = Application.joins(:competitions).where(campaign_id: params[:campaign_id], competitions: {recommended_date: date}).uniq
         unless as.empty?
-          rls.RecommendedList do |rl|
-            rl.Stage stage
-            rl.RecLists do |recls|
-              as.each do |a|
+          as.each do |a|
+            rls.RecommendedList do |rl|
+              rl.Stage stage
+              rl.RecLists do |recls|
                 recls.RecList do |recl|
                   recl.Application do |am|
                     am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
