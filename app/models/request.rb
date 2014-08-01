@@ -521,7 +521,7 @@ class Request < ActiveRecord::Base
     CampaignDate.where(campaign_id: params[:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
     root.RecommendedLists do |rls|
       order_dates.each do |date, stage|
-        as = Application.joins(:competitions).where(campaign_id: params[:campaign_id], competitions: {recommended_date: date})
+        as = Application.joins(:competitions).where(campaign_id: params[:campaign_id], competitions: {recommended_date: date}).uniq
         unless as.empty?
           rls.RecommendedList do |rl|
             rl.Stage stage
