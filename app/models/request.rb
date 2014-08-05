@@ -556,7 +556,7 @@ class Request < ActiveRecord::Base
     orders_of_admission = ::Builder::XmlMarkup.new(indent: 2)
     order_dates = {}
     CampaignDate.where(campaign_id: params[:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
-    as = Application.joins(:competitions).where(campaign_id: params[:campaign_id]).where.not(competitions: {admission_date: nil})
+    as = Application.joins(:competitions).where(campaign_id: params[:campaign_id]).where.not(competitions: {admission_date: nil}).uniq
     root.OrdersOfAdmission do |ooas|
       as.each do |a|
         ooas.OrderOfAdmission do |ooa|
@@ -564,7 +564,7 @@ class Request < ActiveRecord::Base
             am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
             am.RegistrationDate a.registration_date.to_datetime
           end
-          c = a.competitions.where.not(admission_date: nil).first
+          c = a.competitions.order(:admission_date).where.not(admission_date: nil).last
           ooa.DirectionID c.competition_item.competitive_group_item.direction_id
           ooa.EducationFormID 11
           ooa.FinanceSourceID c.competition_item.finance_source_id
