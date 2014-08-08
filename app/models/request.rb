@@ -206,7 +206,7 @@ class Request < ActiveRecord::Base
   
   def self.applications(root, params)
     applications = ::Builder::XmlMarkup.new(indent: 2)
-    @a = Application.where(campaign_id: params[:campaign_id]).where("updated_at > ?", Time.now.to_date - 1)
+    @a = Application.where(campaign_id: params[:campaign_id])
     root.Applications do |as|
       @a.each do |am|
       as.Application do |a|
