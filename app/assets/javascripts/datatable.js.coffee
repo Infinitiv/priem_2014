@@ -1,1 +1,1 @@
-$(".datatable").dataTable sPaginationType: "bootstrap"
+$(".datatable").dataTable paging: true
