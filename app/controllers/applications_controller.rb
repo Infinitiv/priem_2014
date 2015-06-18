@@ -2,7 +2,7 @@ class ApplicationsController < ApplicationController
 before_action :set_application, only: [:show]
   def index
     last_campaign = Campaign.last
-    @applications = Application.order(:application_number).where(campaign_id: last_campaign)
+    @applications = Application.order(:application_number).where(campaign_id: @default_campaign)
   end
   def show
   end
@@ -22,13 +22,13 @@ before_action :set_application, only: [:show]
   end
   
   def competition
-    @applications = Application.includes(:competitions).where(campaign_id: 2, last_deny_day: nil).where("chemistry > ? and biology > ? and russian > ?", 35, 35, 35).sort_by{|a| [a.summa, a.chemistry, a.biology, a.russian]}.reverse
-    @admission_volume = AdmissionVolume.where(campaign_id: 2)
+    @applications = Application.includes(:competitions).where(campaign_id: @default_campaign, last_deny_day: nil).where("chemistry > ? and biology > ? and russian > ?", 35, 35, 35).sort_by{|a| [a.summa, a.chemistry, a.biology, a.russian]}.reverse
+    @admission_volume = AdmissionVolume.where(campaign_id: @default_campaign)
     @applications_hash = Application.competition(@applications, @admission_volume)
   end
   
   def ege_to_txt
-    applications = Application.includes(:identity_documents).where(campaign_id: 2, last_deny_day: nil, inner_exam: false)
+    applications = Application.includes(:identity_documents).where(campaign_id: @default_campaign, last_deny_day: nil, inner_exam: false)
     ege_to_txt = Application.ege_to_txt(applications)
     send_data ege_to_txt, :filename => "ege #{Time.now.to_date}.csv", :type => 'text/plain', :disposition => "attachment"
   end

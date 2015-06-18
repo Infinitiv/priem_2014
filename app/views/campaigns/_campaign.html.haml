@@ -1,0 +1,4 @@
+%li
+  = link_to(campaign.name, campaign_path(campaign))
+  = link_to campaign_path(campaign) , title: 'Удалить кампанию', method: :delete, data: { confirm: 'Are you sure?', remote: "true"} do
+    %span.glyphicon.glyphicon-remove{"aria-hidden" => "true"}

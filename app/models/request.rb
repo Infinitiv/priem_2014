@@ -27,6 +27,7 @@ class Request < ActiveRecord::Base
         data.PackageData do |pd|
           campaign_info(pd, params) if params[:campaign_info]
 	  admission_info(pd, params) if params[:admission_info]
+          institution_achievements(pd, params) if params[:institution_achievements]
 	  applications(pd, params) if params[:applications]
           recommended_lists(pd, params) if params[:recommended_lists]
           orders_of_admission(pd, params) if params[:orders_of_admission]
@@ -39,6 +40,7 @@ class Request < ActiveRecord::Base
         data.PackageData do |pd|
           campaign_info(pd, params) if params[:campaign_info]
 	  admission_info(pd, params) if params[:admission_info]
+          institution_achievements(pd, params) if params[:institution_achievements]
 	  applications(pd, params) if params[:applications]
           recommended_lists(pd, params) if params[:recommended_lists]
           orders_of_admission(pd, params) if params[:orders_of_admission]
@@ -110,6 +112,22 @@ class Request < ActiveRecord::Base
     end
   end
 
+  def self.institution_achievements(root, params)
+    institution_achievements = ::Builder::XmlMarkup.new(indent: 2)
+    c = InstitutionAchivement.where(campaign_id: params[:campaign_id])
+    root.InstitutionAchivements do |ias|
+      c.each do |cm|
+        ias.InstitutionAchivement do |ia|
+          ia.IAUID cm.id
+          ia.Name cm.name
+          ia.IdCatigory cm.id_category
+          ia.MaxValue cm.max_value
+          ia.CampaignUID cm.campaign_id
+        end
+      end
+    end
+  end
+  
   def self.admission_info(root, params)
     admission_info = ::Builder::XmlMarkup.new(indent: 2)
     @c = AdmissionVolume.where(campaign_id: params[:campaign_id])
@@ -136,6 +154,26 @@ class Request < ActiveRecord::Base
 	    i.NumberQuotaZ cm.number_quota_z if cm.number_quota_z	    
 	  end
 	end
+      end
+      ai.DistributedAdmissionVolume do |da|
+        @c.each do |cm|
+          da.Item do |i|
+            i.AdmissionVolumeUID cm.id
+            i.LevelBudget 1
+	    i.NumberBudgetO cm.number_budget_o if cm.number_budget_o
+	    i.NumberBudgetOZ cm.number_budget_oz if cm.number_budget_oz
+	    i.NumberBudgetZ cm.number_budget_z if cm.number_budget_z
+	    i.NumberPaidO cm.number_paid_o if cm.number_paid_o
+	    i.NumberPaidOZ cm.number_paid_oz if cm.number_paid_oz
+	    i.NumberPaidZ cm.number_paid_z if cm.number_paid_z
+	    i.NumberTargetO cm.number_target_o if cm.number_target_o
+	    i.NumberTargetOZ cm.number_target_oz if cm.number_target_oz
+	    i.NumberTargetZ cm.number_target_z if cm.number_target_z
+	    i.NumberQuotaO cm.number_quota_o if cm.number_quota_o
+	    i.NumberQuotaOZ cm.number_quota_oz if cm.number_quota_oz
+	    i.NumberQuotaZ cm.number_quota_z if cm.number_quota_z
+          end
+        end
       end
       ai.CompetitiveGroups do |cgs|
 	@c = CompetitiveGroup.where(campaign_id: params[:campaign_id]) 

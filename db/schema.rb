@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140730063125) do
+ActiveRecord::Schema.define(version: 20150618134132) do
 
   create_table "admission_volumes", force: true do |t|
     t.integer  "campaign_id"
@@ -91,12 +91,13 @@ ActiveRecord::Schema.define(version: 20140730063125) do
   add_index "campaign_dates", ["campaign_id"], name: "index_campaign_dates_on_campaign_id", using: :btree
 
   create_table "campaigns", force: true do |t|
-    t.string   "name",       default: ""
+    t.string   "name",        default: ""
     t.integer  "year_start"
     t.integer  "year_end"
-    t.integer  "status_id",  default: 1
+    t.integer  "status_id",   default: 1
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "is_for_krym", default: false
   end
 
   create_table "competition_items", force: true do |t|
@@ -165,6 +166,11 @@ ActiveRecord::Schema.define(version: 20140730063125) do
   end
 
   add_index "competitive_groups", ["campaign_id"], name: "index_competitive_groups_on_campaign_id", using: :btree
+
+  create_table "competitive_groups_target_organizations", id: false, force: true do |t|
+    t.integer "competitive_group_id",   null: false
+    t.integer "target_organization_id", null: false
+  end
 
   create_table "education_document_types", force: true do |t|
     t.string   "name"
@@ -239,6 +245,17 @@ ActiveRecord::Schema.define(version: 20140730063125) do
   add_index "identity_documents", ["application_id"], name: "index_identity_documents_on_application_id", using: :btree
   add_index "identity_documents", ["identity_document_type_id"], name: "index_identity_documents_on_identity_document_type_id", using: :btree
 
+  create_table "institution_achievements", force: true do |t|
+    t.string   "name"
+    t.integer  "id_category"
+    t.integer  "max_value"
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "institution_achievements", ["campaign_id"], name: "index_institution_achievements_on_campaign_id", using: :btree
+
   create_table "queries", force: true do |t|
     t.string   "name",       default: ""
     t.datetime "created_at"
@@ -256,12 +273,9 @@ ActiveRecord::Schema.define(version: 20140730063125) do
   add_index "requests", ["query_id"], name: "index_requests_on_query_id", using: :btree
 
   create_table "target_organizations", force: true do |t|
-    t.integer  "competitive_group_id"
     t.string   "target_organization_name", default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "target_organizations", ["competitive_group_id"], name: "index_target_organizations_on_competitive_group_id", using: :btree
 
 end

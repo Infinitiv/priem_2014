@@ -13,7 +13,14 @@ Rails.application.routes.draw do
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
+  
+  controller :sessions do
+    post 'set_default_campaing' => :create
+    delete 'remove_default_campaign' => :destroy
+  end
+  
   resources :requests
+  resources :campaigns
   resources :applications do
     collection do
       post 'import'

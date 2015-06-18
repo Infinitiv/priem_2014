@@ -1,0 +1,89 @@
+%h1
+  = @campaign.name
+%dl
+  %dt Год начала
+  %dd
+    = @campaign.year_start
+%dl
+  %dt Год окончания
+  %dd
+    = @campaign.year_end
+%dl
+  %dt Текущий статус
+  %dd
+    = @campaign.status_id
+%dl
+  %dt Места для жителей Крыма
+  %dd
+    = @campaign.is_for_krym ? "да" : "нет"
+%h2 Конкурсные группы
+%ul
+  - @campaign.competitive_groups.each do |competitive_group|
+    %li
+      = competitive_group.name
+    %li
+      = "Курс #{competitive_group.course}"
+      %h3 Элемент конкурсной группы
+      %ul
+        - competitive_group.competitive_group_items.each do |competitive_group_item|
+          %li
+            = "уровень образования #{competitive_group_item.education_level_id}"
+            %br
+            = "направление подготовки - #{competitive_group_item.direction_id}"
+            %br
+            = "количество мест на целевой прием - #{competitive_group_item.number_target_o}"
+            %br
+            = "количество мест на прием по квоте - #{competitive_group_item.number_quota_o}"
+            %br
+            = "количество бюджетных мест на общий конкурс - #{competitive_group_item.number_budget_o}"
+            %br
+            = "количество внебюджетных мест - #{competitive_group_item.number_paid_o}"
+      %h3 Организация заказчик целевого приема
+      %ul
+        - competitive_group.target_organizations.each do |target_organization|
+          %li
+            = target_organization.target_organization_name
+            %ul
+              - target_organization.competitive_group_target_items.each do |competitive_group_target_item|
+                %li
+                  = "направление подготовки - #{competitive_group_target_item.direction_id}"
+                  %br
+                  = "уровень образования - #{competitive_group_target_item.education_level_id}"
+                  %br
+                  = "количество мест на целевой прием - #{competitive_group_target_item.number_target_o}"
+%h2 Формы обучения
+%ul
+  - @campaign.education_forms.each do |education_form|
+    %li
+      = education_form.education_form_id
+%h2 Уровни обучения
+%ul
+  - @campaign.education_levels.each do |education_level|
+    %li
+      = education_level.education_level_id
+      %br
+      = "Курс #{education_level.course}"
+%h2 Даты приема
+%ul
+  - @campaign.campaign_dates.sort_by(&:date_order).each do |campaign_date|
+    %li
+      = "прием документов с #{campaign_date.date_start} по #{campaign_date.date_end}, дата издания приказа - #{campaign_date.date_order}" + (", этап зачисления - #{campaign_date.stage}" unless campaign_date.stage.nil?).to_s
+      %br
+      = "уровень обучения - #{campaign_date.education_level_id}"
+      %br
+      = "форма обучения - #{campaign_date.education_form_id}"
+      %br
+      = "источник финансирования - #{campaign_date.education_source_id}"
+%h2 Объем и структура приема
+%ul
+  - @campaign.admission_volumes.sort_by(&:direction_id).each do |admission_volume|
+    %li
+      = "направление подготовки - #{admission_volume.direction_id}"
+      %br
+      = "количество мест на целевой прием - #{admission_volume.number_target_o}"
+      %br
+      = "количество мест на прием по квоте - #{admission_volume.number_quota_o}"
+      %br
+      = "количество бюджетных мест на общий конкурс - #{admission_volume.number_budget_o}"
+      %br
+      = "количество внебюджетных мест - #{admission_volume.number_paid_o}"

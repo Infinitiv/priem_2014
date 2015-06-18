@@ -1,0 +1,22 @@
+= form_for(@campaign, data: {remote: true}, id: "form") do |f|
+  .form-group
+    = f.label :name, 'Имя кампании'
+    %br
+    = f.text_field :name, class: "form-control"
+  .form-group
+    = f.label :year_start, 'Начало кампании'
+    %br
+    = f.number_field :year_start, value: @current_year, in: @current_year - 5..@current_year + 5, step: 1, class: "form-control"
+  .form-group
+    = f.label :year_end, 'Окончание кампании'
+    %br
+    = f.number_field :year_end, value: @current_year, in: @current_year - 5..@current_year + 5, step: 1, class: "form-control"
+  .form-group
+    = f.label :status_id, 'Статус кампании'
+    %br
+    = f.select :status_id, options_for_select({"Набор не начался" => 0, "Идет набор" => 1, "Завершена" => 2},), {:include_blank => ''}, {class: "form-control"}
+  .checkboxes
+    = f.label :is_for_krym, f.check_box(:is_for_krym) + "Для Крымчан", :class => "checkbox"
+    %br
+  .form-group
+    = f.submit 'Создать новую приемную кампанию', class: "btn btn-primary"

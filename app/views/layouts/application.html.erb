@@ -28,12 +28,27 @@
         <li><%= link_to 'Ошибки', errors_applications_path %></li>
         <li><%= link_to 'Конкурс', competition_applications_path %></li>
         <li><%= link_to 'Проверка ЕГЭ', ege_to_txt_applications_path %></li>
+        <li><%= link_to 'Кампании', campaigns_path %></li>
       </ul>
     </div>
   </div>
 </nav>
 <div class="container">
   <div class="row">
+    <% if @default_campaign_name %>
+      <div class="pull-right text-success"><%= @default_campaign_name %>
+        <%= link_to remove_default_campaign_path, title: 'Удалить кампанию по умолчанию', method: :delete, data: { confirm: 'Are you sure?' } do %>
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <% end %>
+      </div>
+    <% else %>
+      <%= form_tag("/set_default_campaing", class: "form-inline pull-right") do %>
+        <div class="form-group">
+          <%= select_tag "campaign_id", options_from_collection_for_select(@campaigns, "id", "name"), prompt: "Выбрать кампанию", class: "form-control " %>
+        </div>
+        <%= submit_tag 'Выбрать кампанию по умолчанию', class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
     <%= yield %>
   </div>
 </div>
