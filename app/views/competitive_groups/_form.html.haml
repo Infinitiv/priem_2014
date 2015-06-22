@@ -1,0 +1,11 @@
+= form_for(@competitive_group, data: {remote: true}, html: {class: "form_inline"}) do |f|
+  .form-group
+    = f.text_field :campaign_id, value: params[:id], class: "form-control hidden"
+  .form-group
+    = f.label :name, 'Название конкурсной группы', class: "sr-only"
+    = f.text_field :name, class: "form-control", placeholder: "Название"
+  .form-group
+    = f.label :course, 'Курс', class: "sr-only"
+    = f.number_field :course, value: 1, in: 1..6, step: 1, class: "form-control", placeholder: "Курс"
+  .form-group
+    = f.submit 'Создать новую конкурсную группу', class: "btn btn-primary"

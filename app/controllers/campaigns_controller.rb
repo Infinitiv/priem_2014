@@ -1,5 +1,5 @@
 class CampaignsController < ApplicationController
-before_action :set_campaign, only: [:show, :destroy]
+before_action :set_campaign, only: [:show, :destroy, :new]
 
   def index
     set_campaigns
@@ -8,6 +8,8 @@ before_action :set_campaign, only: [:show, :destroy]
   end
   
   def show
+    @competitive_group = @campaign.competitive_groups.new
+    @competitive_groups = @campaign.competitive_groups.where.not(id: nil)
   end
   
   def new

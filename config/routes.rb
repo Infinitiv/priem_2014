@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   
   resources :requests
   resources :campaigns
+  resources :competitive_groups
   resources :applications do
     collection do
       post 'import'
