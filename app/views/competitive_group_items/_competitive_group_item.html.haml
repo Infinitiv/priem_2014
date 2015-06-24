@@ -1,0 +1,17 @@
+%li
+  %h3 Элемент конкурсной группы
+  %ul
+    %li
+      = "уровень образования #{competitive_group_item.education_level_id}"
+      = link_to competitive_group_item_path(competitive_group_item) + "?competitive_group_item[competitive_group_item_id]=#{competitive_group_item.id}&competitive_group_item[competitive_group_id]=#{competitive_group.id}", title: 'Удалить конкурсную группу', method: :delete, data: { confirm: 'Are you sure?', remote: 'true'} do
+        %span.glyphicon.glyphicon-remove{"aria-hidden" => "true"}
+      %br
+      = "направление подготовки - #{competitive_group_item.direction_id}"
+      %br
+      = "количество мест на целевой прием - #{competitive_group_item.number_target_o}"
+      %br
+      = "количество мест на прием по квоте - #{competitive_group_item.number_quota_o}"
+      %br
+      = "количество бюджетных мест на общий конкурс - #{competitive_group_item.number_budget_o}"
+      %br
+      = "количество внебюджетных мест - #{competitive_group_item.number_paid_o}"

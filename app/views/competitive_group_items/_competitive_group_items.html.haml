@@ -1,0 +1,3 @@
+%ul
+  = render partial: 'competitive_group_items/form', locals: {competitive_group: competitive_group}
+  = render partial: 'competitive_group_items/competitive_group_item', collection: competitive_group.competitive_group_items.where.not(id: nil), as: :competitive_group_item, locals: {competitive_group: competitive_group}
