@@ -17,7 +17,8 @@
   %dd
     = @campaign.is_for_krym ? "да" : "нет"
 %h2 Конкурсные группы
-= render 'competitive_groups/competitive_groups'
+#competitive_groups
+  = render 'competitive_groups/competitive_groups'
 %h2 Формы обучения
 %ul
   - @campaign.education_forms.each do |education_form|

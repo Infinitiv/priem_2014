@@ -1,0 +1,16 @@
+%h3 Организация заказчик целевого приема
+= render partial: 'competitive_group_target_items/form', locals: {competitive_group: competitive_group}
+%ul
+  - competitive_group.competitive_group_target_items.where.not(id: nil).group_by{|i| i.target_organization.target_organization_name}.each do |target_organization_name, competitive_group_target_items|
+    %li
+      = target_organization_name
+      %ul
+        - competitive_group_target_items.each do |competitive_group_target_item|
+          %li
+            = "направление подготовки - #{competitive_group_target_item.direction_id}"
+            = link_to competitive_group_target_item_path(competitive_group_target_item) + "?competitive_group_target_item[competitive_group_target_item_id]=#{competitive_group_target_item.id}&competitive_group_target_item[competitive_group_id]=#{competitive_group.id}", title: 'Удалить конкурсную группу', method: :delete, data: { confirm: 'Are you sure?', remote: 'true'} do
+              %span.glyphicon.glyphicon-remove{"aria-hidden" => "true"}
+            %br
+            = "уровень образования - #{competitive_group_target_item.education_level_id}"
+            %br
+            = "количество мест на целевой прием - #{competitive_group_target_item.number_target_o}"

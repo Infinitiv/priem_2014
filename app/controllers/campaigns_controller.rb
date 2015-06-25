@@ -10,6 +10,7 @@ before_action :set_campaign, only: [:show, :destroy, :new]
   def show
     @competitive_group = @campaign.competitive_groups.new
     @competitive_groups = @campaign.competitive_groups.where.not(id: nil)
+    @target_organizations = TargetOrganization.order(:target_organization_name).load
   end
   
   def new

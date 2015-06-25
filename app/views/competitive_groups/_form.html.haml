@@ -1,4 +1,4 @@
-= form_for(@competitive_group, data: {remote: true}, html: {class: "form_inline"}) do |f|
+= form_for(@competitive_groups.new, data: {remote: true}, html: {class: "form_inline"}) do |f|
   .form-group
     = f.text_field :campaign_id, value: params[:id], class: "form-control hidden"
   .form-group

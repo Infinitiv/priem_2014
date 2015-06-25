@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   resources :campaigns
   resources :competitive_groups
   resources :competitive_group_items
+  resources :competitive_group_target_items
   resources :applications do
     collection do
       post 'import'

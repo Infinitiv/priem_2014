@@ -5,17 +5,6 @@
 %li
   = "Курс #{competitive_group.course}"
   #competitive_group_items
-  = render partial: 'competitive_group_items/competitive_group_items', locals: { competitive_group: competitive_group }
-  %h3 Организация заказчик целевого приема
-  %ul
-    - competitive_group.target_organizations.each do |target_organization|
-      %li
-        = target_organization.target_organization_name
-        %ul
-          - target_organization.competitive_group_target_items.each do |competitive_group_target_item|
-            %li
-              = "направление подготовки - #{competitive_group_target_item.direction_id}"
-              %br
-              = "уровень образования - #{competitive_group_target_item.education_level_id}"
-              %br
-              = "количество мест на целевой прием - #{competitive_group_target_item.number_target_o}"
+    = render partial: 'competitive_group_items/competitive_group_items', locals: { competitive_group: competitive_group }
+  #competitive_group_target_items
+    = render partial: 'competitive_group_target_items/competitive_group_target_items', locals: { competitive_group: competitive_group }
