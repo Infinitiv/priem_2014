@@ -1,4 +1,4 @@
-= form_for(competitive_group.competitive_group_target_items.new, html: {class: "form_inline pull-rigth"}) do |f|
+= form_for(competitive_group.competitive_group_target_items.new, html: {class: "form_inline pull-rigth"}, data: {remote: 'true'}) do |f|
   .form-group
     = f.text_field :competitive_group_id, value: competitive_group.id, class: "form-control hidden"
   .form-group
