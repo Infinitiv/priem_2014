@@ -6,12 +6,12 @@
     = f.select :direction_id, options_for_select({"Лечебное дело" => 438, "Педиатрия" => 441, "Стоматология" => 470}), {:include_blank => ''}, {class: "form-control", placeholder: "Направление подготовки"}
   .form-group
     = f.label :number_budget_o, 'Количество мест на бюджет'
-    = f.number_field :number_budget_o, value: 0, in: 1..185, step: 1, class: "form-control", placeholder: "Количество мест на бюджет"
+    = f.number_field :number_budget_o, value: 0, in: 0..185, step: 1, class: "form-control", placeholder: "Количество мест на бюджет"
     = f.label :number_paid_o, 'Количество мест на внебюджет'
-    = f.number_field :number_paid_o, value: 0, in: 1..185, step: 1, class: "form-control", placeholder: "Количество мест на внебюджет"
+    = f.number_field :number_paid_o, value: 0, in: 0..185, step: 1, class: "form-control", placeholder: "Количество мест на внебюджет"
     = f.label :number_target_o, 'Количество мест на целевой прием'
-    = f.number_field :number_target_o, value: 0, in: 1..185, step: 1, class: "form-control", placeholder: "Количество мест на целевой прием"
+    = f.number_field :number_target_o, value: 0, in: 0..185, step: 1, class: "form-control", placeholder: "Количество мест на целевой прием"
     = f.label :number_quota_o, 'Количество мест для лиц, имеющих особое право'
-    = f.number_field :number_quota_o, value: 0, in: 1..185, step: 1, class: "form-control", placeholder: "Количество мест для лиц, имеющих особое право"
+    = f.number_field :number_quota_o, value: 0, in: 0..185, step: 1, class: "form-control", placeholder: "Количество мест для лиц, имеющих особое право"
   .form-group
     = f.submit 'Создать новый элемент конкурсной группы', class: "btn btn-primary"
