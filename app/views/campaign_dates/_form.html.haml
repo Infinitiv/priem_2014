@@ -1,0 +1,22 @@
+= form_for(@campaign.campaign_dates.new, data: {remote: true}, html: {class: "form_inline"}) do |f|
+  .form-group
+    = f.text_field :campaign_id, value: params[:id], class: "form-control hidden"
+    = f.text_field :education_level_id, value: 5, class: "form-control hidden"
+    = f.text_field :education_form_id, value: 11, class: "form-control hidden"
+  .form-group
+    = f.label :education_source_id, 'Источник финансирования', class: "sr-only"
+    = f.select :education_source_id, options_for_select({"Бюджетные места" => 14, "С оплатой обучения" => 15, "Целевой прием" => 16, "Квота лиц, имеющих особое право" => 20}), {:include_blank => 'Источник финансирования'}, {class: "form-control"}
+  .form-group
+    = f.label :stage, 'Курс', class: "sr-only"
+    = f.number_field :stage, in: 1..2, step: 1, class: "form-control", placeholder: "Этап зачисления"
+  .form-group
+    = f.label :date_start,  'Дата начала подачи документов', class: 'sr-only'
+    = f.text_field :date_start, class: 'form-control datepicker', placeholder: 'Дата начала подачи документов'
+  .form-group
+    = f.label :date_end,  'Дата окончания подачи документов', class: 'sr-only'
+    = f.text_field :date_end, class: 'form-control datepicker', placeholder: 'Дата окончания подачи документов'
+  .form-group
+    = f.label :date_order,  'Дата издания приказа', class: 'sr-only'
+    = f.text_field :date_order, class: 'form-control datepicker', placeholder: 'Дата издания приказа'
+  .form-group
+    = f.submit 'Создать новую дату приема', class: "btn btn-primary"

@@ -31,17 +31,7 @@
       = education_level.education_level_id
       %br
       = "Курс #{education_level.course}"
-%h2 Даты приема
-%ul
-  - @campaign.campaign_dates.sort_by(&:date_order).each do |campaign_date|
-    %li
-      = "прием документов с #{campaign_date.date_start} по #{campaign_date.date_end}, дата издания приказа - #{campaign_date.date_order}" + (", этап зачисления - #{campaign_date.stage}" unless campaign_date.stage.nil?).to_s
-      %br
-      = "уровень обучения - #{campaign_date.education_level_id}"
-      %br
-      = "форма обучения - #{campaign_date.education_form_id}"
-      %br
-      = "источник финансирования - #{campaign_date.education_source_id}"
+= render partial: 'campaign_dates/campaign_dates', locals: {campaign: @campaign}
 %h2 Объем и структура приема
 %ul
   - @campaign.admission_volumes.sort_by(&:direction_id).each do |admission_volume|

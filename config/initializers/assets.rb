@@ -1,1 +1,1 @@
-Rails.application.config.assets.precompile += %w( datatable.js )
+Rails.application.config.assets.precompile += %w( datatable.js datepicker.js )

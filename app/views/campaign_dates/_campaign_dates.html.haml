@@ -1,0 +1,4 @@
+%h2#campaign_dates Даты приема
+= render 'campaign_dates/form'
+%ul
+  = render partial: 'campaign_dates/campaign_date', collection: campaign.campaign_dates.order(:date_order).where.not(id: nil), as: :campaign_date

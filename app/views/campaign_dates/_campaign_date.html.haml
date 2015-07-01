@@ -1,0 +1,10 @@
+%li
+  = "прием документов с #{campaign_date.date_start} по #{campaign_date.date_end}, дата издания приказа - #{campaign_date.date_order}" + (", этап зачисления - #{campaign_date.stage}" unless campaign_date.stage.nil?).to_s
+  = link_to campaign_date_path(campaign_date) + "?campaign_date[campaign_date_id]=#{campaign_date.id}", title: 'Удалить дату приема', method: :delete, data: { confirm: 'Are you sure?', remote: 'true'} do
+    %span.glyphicon.glyphicon-remove{"aria-hidden" => "true"}
+  %br
+  = "уровень обучения - #{campaign_date.education_level_id}"
+  %br
+  = "форма обучения - #{campaign_date.education_form_id}"
+  %br
+  = "источник финансирования - #{campaign_date.education_source_id}"
