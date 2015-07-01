@@ -244,7 +244,7 @@ class Request < ActiveRecord::Base
   
   def self.applications(root, params)
     applications = ::Builder::XmlMarkup.new(indent: 2)
-    @a = Application.where(campaign_id: params[:campaign_id])
+    @a = Application.where(campaign_id: params[:campaign_id], status_id: [4, 6])
     root.Applications do |as|
       @a.each do |am|
       as.Application do |a|
