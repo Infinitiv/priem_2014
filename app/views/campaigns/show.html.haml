@@ -21,27 +21,16 @@
   = render 'competitive_groups/competitive_groups'
 %h2 Формы обучения
 %ul
-  - @campaign.education_forms.each do |education_form|
-    %li
-      = education_form.education_form_id
+  - if @campaign.campaign_dates
+    - @campaign.campaign_dates.map{|d| {education_form_id: d.education_form_id}}.uniq.each do |i|
+      %li
+        = i[:education_form_id]
 %h2 Уровни обучения
 %ul
-  - @campaign.education_levels.each do |education_level|
-    %li
-      = education_level.education_level_id
-      %br
-      = "Курс #{education_level.course}"
+  - if @campaign.campaign_dates
+    - @campaign.campaign_dates.map{|d| {course: d.course, education_level_id: d.education_level_id}}.uniq.each do |i|
+      %li
+        = i[:education_level_id]
+        %br
+        = "Курс #{i[:course]}"
 = render partial: 'campaign_dates/campaign_dates', locals: {campaign: @campaign}
-%h2 Объем и структура приема
-%ul
-  - @campaign.admission_volumes.sort_by(&:direction_id).each do |admission_volume|
-    %li
-      = "направление подготовки - #{admission_volume.direction_id}"
-      %br
-      = "количество мест на целевой прием - #{admission_volume.number_target_o}"
-      %br
-      = "количество мест на прием по квоте - #{admission_volume.number_quota_o}"
-      %br
-      = "количество бюджетных мест на общий конкурс - #{admission_volume.number_budget_o}"
-      %br
-      = "количество внебюджетных мест - #{admission_volume.number_paid_o}"
