@@ -1,7 +1,7 @@
 %h3 Организация заказчик целевого приема
 = render partial: 'competitive_group_target_items/form', locals: {competitive_group: competitive_group}
 %ul
-  - competitive_group.competitive_group_target_items.where.not(id: nil).group_by{|i| i.target_organization.target_organization_name}.each do |target_organization_name, competitive_group_target_items|
+  - competitive_group.competitive_group_target_items.where.not(id: nil).group_by{|i| i.target_organization.target_organization_name}.sort.each do |target_organization_name, competitive_group_target_items|
     %li
       = target_organization_name
       %ul
