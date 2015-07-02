@@ -8,3 +8,4 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 TargetOrganization.create(target_organization_name: "Департамент здравоохранения Пензенской области")
 TargetOrganization.create(target_organization_name: "Департамент здравоохранения Московской области")
+InstitutionAchievement.create(campaign_id: 3, name: "Аттестат о среднем общем образовании с отличием", max_value: 10, id_category: 9)
