@@ -13,7 +13,7 @@ class RequestsController < ApplicationController
   end
   
   def create
-    params[:request][:campaign_id] = @default_campaing.id
+    params[:request][:campaign_id] = @default_campaign.id
     case Rails.env
       when 'development' then url = 'priem.edu.ru:8000'
       when 'production' then url = '127.0.0.1:8080'

@@ -68,42 +68,40 @@ class Request < ActiveRecord::Base
   
   def self.campaign_info(root, params)
     campaign_info = ::Builder::XmlMarkup.new(indent: 2)
-    @c = Campaign.where(id: params[:campaign_id])
+    c = Campaign.find_by_id(params[:request][:campaign_id])
     root.CampaignInfo do |ci|
       ci.Campaigns do |ca|
-        @c.each do |cm|
-          ca.Campaign do |c|
-            c.UID cm.id
-            c.Name cm.name
-            c.YearStart cm.year_start
-            c.YearEnd cm.year_end
-            cm.education_forms.each do |efm|
-              c.EducationForms do |ef|
-                ef.EducationFormID efm.education_form_id
+        ca.Campaign do |cm|
+          cm.UID c.id
+          cm.Name c.name
+          cm.YearStart c.year_start
+          cm.YearEnd c.year_end
+          c.campaign_dates.map{|d| {education_form_id: d.education_form_id}}.uniq.each do |efm|
+            cm.EducationForms do |ef|
+              ef.EducationFormID efm[:education_form_id]
+            end
+          end
+          cm.StatusID c.status_id
+          cm.EducationLevels do |els|
+            c.campaign_dates.map{|d| {course: d.course, education_level_id: d.education_level_id}}.uniq.each do |elm|
+              els.EducationLevel do |el|
+                el.Course elm[:course]
+                el.EducationLevelID elm[:education_level_id]
               end
             end
-            c.StatusID cm.status_id
-            c.EducationLevels do |els|
-              cm.education_levels.each do |elm|
-                els.EducationLevel do |el|
-                  el.Course elm.course
-                  el.EducationLevelID elm.education_level_id
-                end
-              end
-            end
-            c.CampaignDates do |cds|
-              cm.campaign_dates.each do |cdm|
-                cds.CampaignDate do |cd|
-                  cd.UID cdm.id
-                  cd.Course cdm.course
-                  cd.EducationLevelID cdm.education_level_id
-                  cd.EducationFormID cdm.education_form_id
-                  cd.EducationSourceID cdm.education_source_id
-                  cd.Stage cdm.stage if cdm.stage
-                  cd.DateStart cdm.date_start
-                  cd.DateEnd cdm.date_end
-                  cd.DateOrder cdm.date_order
-                end
+          end
+          cm.CampaignDates do |cds|
+            c.campaign_dates.each do |cdm|
+              cds.CampaignDate do |cd|
+                cd.UID cdm.id
+                cd.Course cdm.course
+                cd.EducationLevelID cdm.education_level_id
+                cd.EducationFormID cdm.education_form_id
+                cd.EducationSourceID cdm.education_source_id
+                cd.Stage cdm.stage if cdm.stage
+                cd.DateStart cdm.date_start
+                cd.DateEnd cdm.date_end
+                cd.DateOrder cdm.date_order
               end
             end
           end
@@ -114,13 +112,13 @@ class Request < ActiveRecord::Base
 
   def self.institution_achievements(root, params)
     institution_achievements = ::Builder::XmlMarkup.new(indent: 2)
-    c = InstitutionAchivement.where(campaign_id: params[:campaign_id])
-    root.InstitutionAchivements do |ias|
+    c = InstitutionAchievement.where(campaign_id: params[:request][:campaign_id])
+    root.InstitutionAchievements do |ias|
       c.each do |cm|
-        ias.InstitutionAchivement do |ia|
+        ias.InstitutionAchievement do |ia|
           ia.IAUID cm.id
           ia.Name cm.name
-          ia.IdCatigory cm.id_category
+          ia.IdCategory cm.id_category
           ia.MaxValue cm.max_value
           ia.CampaignUID cm.campaign_id
         end
@@ -130,54 +128,51 @@ class Request < ActiveRecord::Base
   
   def self.admission_info(root, params)
     admission_info = ::Builder::XmlMarkup.new(indent: 2)
-    @c = AdmissionVolume.where(campaign_id: params[:campaign_id])
+    c = Campaign.find_by_id(params[:request][:campaign_id])
     root.AdmissionInfo do |ai|
       ai.AdmissionVolume do |av|
-	@c.each do |cm|
+	c.competitive_group_items.each do |cgi|
 	  av.Item do |i|
-	    i.UID cm.id
-	    i.CampaignUID cm.campaign_id
-	    i.EducationLevelID cm.education_level_id
-	    i.Course cm.course
-	    i.DirectionID cm.direction_id
-	    i.NumberBudgetO cm.number_budget_o if cm.number_budget_o
-	    i.NumberBudgetOZ cm.number_budget_oz if cm.number_budget_oz
-	    i.NumberBudgetZ cm.number_budget_z if cm.number_budget_z
-	    i.NumberPaidO cm.number_paid_o if cm.number_paid_o
-	    i.NumberPaidOZ cm.number_paid_oz if cm.number_paid_oz
-	    i.NumberPaidZ cm.number_paid_z if cm.number_paid_z
-	    i.NumberTargetO cm.number_target_o if cm.number_target_o
-	    i.NumberTargetOZ cm.number_target_oz if cm.number_target_oz
-	    i.NumberTargetZ cm.number_target_z if cm.number_target_z
-	    i.NumberQuotaO cm.number_quota_o if cm.number_quota_o
-	    i.NumberQuotaOZ cm.number_quota_oz if cm.number_quota_oz
-	    i.NumberQuotaZ cm.number_quota_z if cm.number_quota_z	    
+	    i.UID cgi.id
+	    i.CampaignUID c.id
+	    i.EducationLevelID cgi.education_level_id
+	    i.Course cgi.competitive_group.course
+	    i.DirectionID cgi.direction_id
+	    i.NumberBudgetO cgi.number_budget_o if cgi.number_budget_o
+	    i.NumberBudgetOZ cgi.number_budget_oz if cgi.number_budget_oz
+	    i.NumberBudgetZ cgi.number_budget_z if cgi.number_budget_z
+	    i.NumberPaidO cgi.number_paid_o if cgi.number_paid_o
+	    i.NumberPaidOZ cgi.number_paid_oz if cgi.number_paid_oz
+	    i.NumberPaidZ cgi.number_paid_z if cgi.number_paid_z
+	    i.NumberTargetO cgi.number_target_o if cgi.number_target_o
+	    i.NumberTargetOZ cgi.number_target_oz if cgi.number_target_oz
+	    i.NumberTargetZ cgi.number_target_z if cgi.number_target_z
+	    i.NumberQuotaO cgi.number_quota_o if cgi.number_quota_o
+	    i.NumberQuotaOZ cgi.number_quota_oz if cgi.number_quota_oz
+	    i.NumberQuotaZ cgi.number_quota_z if cgi.number_quota_z	    
 	  end
 	end
       end
       ai.DistributedAdmissionVolume do |da|
-        @c.each do |cm|
+        c.competitive_group_items.each do |cgi|
           da.Item do |i|
-            i.AdmissionVolumeUID cm.id
+            i.AdmissionVolumeUID cgi.id
             i.LevelBudget 1
-	    i.NumberBudgetO cm.number_budget_o if cm.number_budget_o
-	    i.NumberBudgetOZ cm.number_budget_oz if cm.number_budget_oz
-	    i.NumberBudgetZ cm.number_budget_z if cm.number_budget_z
-	    i.NumberPaidO cm.number_paid_o if cm.number_paid_o
-	    i.NumberPaidOZ cm.number_paid_oz if cm.number_paid_oz
-	    i.NumberPaidZ cm.number_paid_z if cm.number_paid_z
-	    i.NumberTargetO cm.number_target_o if cm.number_target_o
-	    i.NumberTargetOZ cm.number_target_oz if cm.number_target_oz
-	    i.NumberTargetZ cm.number_target_z if cm.number_target_z
-	    i.NumberQuotaO cm.number_quota_o if cm.number_quota_o
-	    i.NumberQuotaOZ cm.number_quota_oz if cm.number_quota_oz
-	    i.NumberQuotaZ cm.number_quota_z if cm.number_quota_z
+	    i.NumberBudgetO cgi.number_budget_o if cgi.number_budget_o
+	    i.NumberBudgetOZ cgi.number_budget_oz if cgi.number_budget_oz
+	    i.NumberBudgetZ cgi.number_budget_z if cgi.number_budget_z
+	    i.NumberTargetO cgi.number_target_o if cgi.number_target_o
+	    i.NumberTargetOZ cgi.number_target_oz if cgi.number_target_oz
+	    i.NumberTargetZ cgi.number_target_z if cgi.number_target_z
+	    i.NumberQuotaO cgi.number_quota_o if cgi.number_quota_o
+	    i.NumberQuotaOZ cgi.number_quota_oz if cgi.number_quota_oz
+	    i.NumberQuotaZ cgi.number_quota_z if cgi.number_quota_z
           end
         end
       end
       ai.CompetitiveGroups do |cgs|
-	@c = CompetitiveGroup.where(campaign_id: params[:campaign_id]) 
-	@c.each do |cm|
+	c = CompetitiveGroup.where(campaign_id: params[:request][:campaign_id]) 
+	c.each do |cm|
 	  cgs.CompetitiveGroup do |cg|
 	    cg.UID cm.id
 	    cg.CampaignUID cm.campaign_id
@@ -202,12 +197,12 @@ class Request < ActiveRecord::Base
 	      end
 	    end
 		cg.TargetOrganizations do |tos|
-		  cm.target_organizations.each do |tom|
+		  cm.competitive_group_target_items.group_by{|i| i.target_organization.target_organization_name}.sort.each do |ton, cgtis|
 		    tos.TargetOrganization do |to|
-		      to.UID tom.id
-		      to.TargetOrganizationName tom.target_organization_name
+		      to.UID TargetOrganization.find_by_target_organization_name(ton).id
+		      to.TargetOrganizationName ton
 		      to.Items do |i|
-			tom.competitive_group_target_items.each do |cgtim|  
+			cgtis.each do |cgtim|  
 			  i.CompetitiveGroupTargetItem do |cgti|
 			    cgti.UID cgtim.id
 			    cgti.EducationLevelID cgtim.education_level_id
@@ -228,11 +223,9 @@ class Request < ActiveRecord::Base
 		    eti.EntranceTestTypeID etim.entrance_test_type_id
 		    eti.Form etim.form
 		    eti.MinScore etim.min_score
-		    etim.entrance_test_subjects.each do |esm|
-		      eti.EntranceTestSubject do |es|
-			es.SubjectID esm.subject_id
-		      end
-		    end
+                    eti.EntranceTestSubject do |es|
+                      es.SubjectID etim.subject_id
+                    end
 		  end
 		end
 		end
@@ -244,7 +237,7 @@ class Request < ActiveRecord::Base
   
   def self.applications(root, params)
     applications = ::Builder::XmlMarkup.new(indent: 2)
-    @a = Application.where(campaign_id: params[:campaign_id], status_id: [4, 6])
+    @a = Application.where(campaign_id: params[:request][:campaign_id], status_id: [4, 6])
     root.Applications do |as|
       @a.each do |am|
       as.Application do |a|
@@ -518,10 +511,10 @@ class Request < ActiveRecord::Base
   def self.recommended_lists(root, params)
     recommended_lists = ::Builder::XmlMarkup.new(indent: 2)
     order_dates = {}
-    CampaignDate.where(campaign_id: params[:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
+    CampaignDate.where(campaign_id: params[:request][:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
     root.RecommendedLists do |rls|
       order_dates.each do |date, stage|
-        as = Application.joins(:competitions).where(campaign_id: params[:campaign_id], competitions: {recommended_date: date}).uniq
+        as = Application.joins(:competitions).where(campaign_id: params[:request][:campaign_id], competitions: {recommended_date: date}).uniq
         unless as.empty?
           as.each do |a|
             rls.RecommendedList do |rl|
@@ -555,8 +548,8 @@ class Request < ActiveRecord::Base
   def self.orders_of_admission(root, params)
     orders_of_admission = ::Builder::XmlMarkup.new(indent: 2)
     order_dates = {}
-    CampaignDate.where(campaign_id: params[:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
-    as = Application.joins(:competitions).where(campaign_id: params[:campaign_id]).where.not(competitions: {admission_date: nil}).uniq
+    CampaignDate.where(campaign_id: params[:request][:campaign_id]).where.not(stage: nil).each{|d| order_dates[d.date_order] = d.stage}
+    as = Application.joins(:competitions).where(campaign_id: params[:request][:campaign_id]).where.not(competitions: {admission_date: nil}).uniq
     root.OrdersOfAdmission do |ooas|
       as.each do |a|
         ooas.OrderOfAdmission do |ooa|
@@ -578,7 +571,7 @@ class Request < ActiveRecord::Base
   
   def self.applications_del(root, params)
     applications_del = ::Builder::XmlMarkup.new(indent: 2)
-    @a = Application.where(campaign_id: params[:campaign_id])
+    @a = Application.where(campaign_id: params[:request][:campaign_id])
     root.Applications do |as|
       @a.each do |am|
 	as.Application do |a|

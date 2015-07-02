@@ -35,7 +35,7 @@ before_action :set_campaign, only: [:show, :destroy, :new]
   
   private
   def set_campaign
-    @campaign = Campaign.includes(:campaign_dates, :competitive_groups, :education_forms, :education_levels, :competitive_group_items, :competitive_group_target_items, :target_organizations).find(params[:id])
+    @campaign = Campaign.includes(:campaign_dates, :competitive_groups, :competitive_group_items, :competitive_group_target_items, :target_organizations).find(params[:id])
   end
   
   def set_campaigns

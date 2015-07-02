@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150702075144) do
+ActiveRecord::Schema.define(version: 20150702130718) do
 
   create_table "admission_volumes", force: true do |t|
     t.integer  "campaign_id"
@@ -42,9 +42,6 @@ ActiveRecord::Schema.define(version: 20150702075144) do
     t.string   "entrant_last_name"
     t.string   "entrant_first_name"
     t.string   "entrant_middle_name"
-    t.integer  "russian"
-    t.integer  "chemistry"
-    t.integer  "biology"
     t.integer  "target_speciality_id"
     t.integer  "target_organization_id"
     t.integer  "nationality_type_id"
@@ -53,9 +50,6 @@ ActiveRecord::Schema.define(version: 20150702075144) do
     t.date     "birth_date"
     t.boolean  "need_hostel",            default: false
     t.boolean  "special_entrant",        default: false
-    t.boolean  "ege",                    default: false
-    t.boolean  "ege_additional",         default: false
-    t.boolean  "inner_exam",             default: false
     t.boolean  "olympionic",             default: false
     t.boolean  "benefit",                default: false
     t.date     "registration_date"
@@ -188,21 +182,6 @@ ActiveRecord::Schema.define(version: 20150702075144) do
   add_index "education_documents", ["application_id"], name: "index_education_documents_on_application_id", using: :btree
   add_index "education_documents", ["education_document_type_id"], name: "index_education_documents_on_education_document_type_id", using: :btree
 
-  create_table "education_forms", force: true do |t|
-    t.integer  "education_form_id", default: 11
-    t.integer  "campaign_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "education_levels", force: true do |t|
-    t.integer  "course",             default: 1
-    t.integer  "education_level_id", default: 5
-    t.integer  "campaign_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "entrance_test_items", force: true do |t|
     t.integer  "competitive_group_id"
     t.integer  "entrance_test_type_id",  default: 1
@@ -211,17 +190,8 @@ ActiveRecord::Schema.define(version: 20150702075144) do
     t.integer  "entrance_test_priority"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "entrance_test_subjects", force: true do |t|
     t.integer  "subject_id"
-    t.string   "subject_name"
-    t.integer  "entrance_test_item_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
-
-  add_index "entrance_test_subjects", ["entrance_test_item_id"], name: "index_entrance_test_subjects_on_entrance_test_item_id", using: :btree
 
   create_table "identity_document_types", force: true do |t|
     t.string   "name"
