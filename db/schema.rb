@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150616182210) do
+ActiveRecord::Schema.define(version: 20150702075144) do
 
   create_table "admission_volumes", force: true do |t|
     t.integer  "campaign_id"
@@ -153,8 +153,10 @@ ActiveRecord::Schema.define(version: 20150616182210) do
     t.integer  "direction_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "competitive_group_id"
   end
 
+  add_index "competitive_group_target_items", ["competitive_group_id"], name: "index_competitive_group_target_items_on_competitive_group_id", using: :btree
   add_index "competitive_group_target_items", ["target_organization_id"], name: "index_competitive_group_target_items_on_target_organization_id", using: :btree
 
   create_table "competitive_groups", force: true do |t|
@@ -271,7 +273,6 @@ ActiveRecord::Schema.define(version: 20150616182210) do
     t.string   "target_organization_name", default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "competitive_group_id"
   end
 
 end
