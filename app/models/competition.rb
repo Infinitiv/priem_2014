@@ -2,6 +2,7 @@ class Competition < ActiveRecord::Base
   belongs_to :competition_item
   belongs_to :application
   has_many :marks, through: :application
+  has_one :competitive_group, through: :competition_item
   
   def self.import_from_row(row, application)
     competition_items = application.campaign.competition_items
