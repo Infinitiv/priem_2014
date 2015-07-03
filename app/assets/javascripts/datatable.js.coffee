@@ -1,1 +1,1 @@
-$(".datatable").dataTable paging: true
+$(".datatable").dataTable paging: true, pageLength: 100
