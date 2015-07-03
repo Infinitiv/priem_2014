@@ -1,25 +1,24 @@
 %h1 Отчет об ошибках
-- @campaigns.each do |campaign|
-  %h2= campaign.name
-  %h3= "Повторяющиеся номера заявлений" unless @errors[campaign][:dups_numbers].empty?
-  %ul
-    - @errors[campaign][:dups_numbers].each do |applications|
-      - applications.each do |application|
-        %li= link_to "%04d" % application.application_number, application_path(application)
-  %h2= "Пропущенные номера заявлений" unless @errors[campaign][:lost_numbers].empty?
-  %p= @errors[campaign][:lost_numbers].join(', ')
-  %h2= "Пропущенные целевики" unless @errors[campaign][:empty_target_entrants].empty?
-  %ul
-    - @errors[campaign][:empty_target_entrants].each do |application_id|
-      - application = Application.find(application_id)
+%h2= @default_campaign.name
+%h3= "Повторяющиеся номера заявлений" unless @errors[:dups_numbers].empty?
+%ul
+  - @errors[:dups_numbers].each do |applications|
+    - applications.each do |application|
       %li= link_to "%04d" % application.application_number, application_path(application)
-  %h2= "Целевики без оригиналов" unless @errors[campaign][:not_original_target_entrants].empty?
-  %ul
-    - @errors[campaign][:not_original_target_entrants].each do |application_id|
-      - application = Application.find(application_id)
-      %li= link_to "%04d" % application.application_number, application_path(application)
-  %h2= "Повторяющиеся абитуриенты" unless @errors[campaign][:dups_entrants].empty?
-  %ul
-    - @errors[campaign][:dups_entrants].each do |k, v|
-      - v.each do |application|
-        %li= link_to "#{"%04d" % application.application_number} #{application.fio}", application_path(application)
+%h2= "Пропущенные номера заявлений" unless @errors[:lost_numbers].empty?
+%p= @errors[:lost_numbers].join(', ')
+%h2= "Пропущенные целевики" unless @errors[:empty_target_entrants].empty?
+%ul
+  - @errors[:empty_target_entrants].each do |application_id|
+    - application = Application.find(application_id)
+    %li= link_to "%04d" % application.application_number, application_path(application)
+%h2= "Целевики без оригиналов" unless @errors[:not_original_target_entrants].empty?
+%ul
+  - @errors[:not_original_target_entrants].each do |application_id|
+    - application = Application.find(application_id)
+    %li= link_to "%04d" % application.application_number, application_path(application)
+%h2= "Повторяющиеся абитуриенты" unless @errors[:dups_entrants].empty?
+%ul
+  - @errors[:dups_entrants].each do |k, v|
+    - v.each do |application|
+      %li= link_to "#{"%04d" % application.application_number} #{application.fio}", application_path(application)

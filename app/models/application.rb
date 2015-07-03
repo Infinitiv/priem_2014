@@ -1,13 +1,19 @@
 #encoding: utf-8
 class Application < ActiveRecord::Base
   belongs_to :campaign
+  has_many :competitive_groups, through: :campaign
   belongs_to :target_organization
   has_many :competitions
   has_many :competition_items, through: :competitions
-  has_many :identity_documents
-  has_many :education_documents
+  has_one :identity_document
+  has_many :identity_document_types, through: :identity_document
+  has_one :education_document
+  has_many :education_document_types, through: :education_document
+  has_many :marks
+  has_many :entrance_test_items, through: :competitive_groups
+  has_and_belongs_to_many :institution_achievements
 
-  def self.import(file)
+  def self.import(file, default_campaign)
     accessible_attributes = column_names
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
@@ -15,26 +21,35 @@ class Application < ActiveRecord::Base
       ActiveRecord::Base.transaction do
         group.each do |i|
           row = Hash[[header, spreadsheet.row(i)].transpose]
-          application = where(application_number: row["application_number"], campaign_id: row["campaign_id"]).first || new
+          application = where(application_number: row["application_number"], campaign_id: default_campaign).first || new
           application.attributes = row.to_hash.slice(*accessible_attributes)
+          application.campaign_id = default_campaign
           if application.save!
             IdentityDocument.import_from_row(row, application)
             EducationDocument.import_from_row(row, application)
             Competition.import_from_row(row, application)
+            Mark.import_from_row(row, application)
+            achievement_attestat = InstitutionAchievement.find_by_id_category(9)
+            case row["achievement"]
+            when 'TRUE'
+              application.institution_achievements << achievement_attestat unless application.institution_achievements.include?(achievement_attestat)
+            else
+              application.institution_achievements.delete(achievement_attestat)
+            end
           end
         end
       end
     end
   end
   
-  def self.import_recommended(file)
+  def self.import_recommended(file, default_campaign)
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).to_a.in_groups_of(100, false) do |group|
       ActiveRecord::Base.transaction do
         group.each do |i|
           row = Hash[[header, spreadsheet.row(i)].transpose]
-          application = where(application_number: row["application_number"], campaign_id: row["campaign_id"]).first
+          application = where(application_number: row["application_number"], campaign_id: default_campaign).first
           competition = application.competitions.where(competition_item_id: row["competition_item_id"]).first
           competition.recommended_date = row["recommended_date"]
           competition.admission_date = row["admission_date"]
@@ -46,10 +61,10 @@ class Application < ActiveRecord::Base
 
   def self.open_spreadsheet(file)
     case File.extname(file.original_filename)
-    when ".ods" then Roo::Openoffice.new(file.path, nil, :ignore)
-    when ".csv" then Roo::Csv.new(file.path, nil, :ignore)
-    when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
-    when ".xlsx" then Roo::Excelx.new(file.path, nil, :ignore)
+    when ".ods" then Roo::OpenOffice.new(file.path)
+    when ".csv" then Roo::CSV.new(file.path)
+    when ".xls" then Roo::Excel.new(file.path)
+    when ".xlsx" then Roo::Excelx.new(file.path)
     else raise "Unknown file type: #{file.original_filename}"
     end
   end
@@ -59,7 +74,11 @@ class Application < ActiveRecord::Base
   end
   
   def summa
-    [russian, chemistry, biology].compact.sum
+    marks.sum(:value)
+  end
+  
+  def achiev_summa
+    institution_achievements.sum(:max_value) > 10 ? 10 : institution_achievements.sum(:max_value)
   end
   
   def self.ege_to_txt(applications)
@@ -70,18 +89,15 @@ class Application < ActiveRecord::Base
     ege_to_txt.encode("cp1251")
   end
   
-  def self.errors
+  def self.errors(default_campaign)
     errors = {}
-    Campaign.all.each do |campaign|
-      applications = campaign.applications.includes([:identity_documents, :competitions])
-      target_competition_entrants_array = applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%")
-      errors[campaign] = {}
-      errors[campaign][:dups_numbers] = find_dups_numbers(applications)
-      errors[campaign][:lost_numbers] = find_lost_numbers(applications)
-      errors[campaign][:dups_entrants] = find_dups_entrants(applications)
-      errors[campaign][:empty_target_entrants] = find_empty_target_entrants(target_competition_entrants_array, applications.select(:id).where("target_organization_id like ?", "%"))
-      errors[campaign][:not_original_target_entrants] = find_not_original_target_entrants(target_competition_entrants_array, applications.select(:id).where.not(original_received_date: nil))
-    end
+    applications = default_campaign.applications.includes([:identity_documents, :competitions])
+    target_competition_entrants_array = applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%")
+    errors[:dups_numbers] = find_dups_numbers(applications)
+    errors[:lost_numbers] = find_lost_numbers(applications)
+    errors[:dups_entrants] = find_dups_entrants(applications)
+    errors[:empty_target_entrants] = find_empty_target_entrants(target_competition_entrants_array, applications.select(:id).where("target_organization_id like ?", "%"))
+    errors[:not_original_target_entrants] = find_not_original_target_entrants(target_competition_entrants_array, applications.select(:id).where.not(original_received_date: nil))
     errors
   end
   

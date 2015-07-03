@@ -24,4 +24,4 @@
       %tr
         %td= link_to "%04d" % application.application_number, application_path(application), class: label_class
         %td= application.fio
-        %td= application.summa
+        %td{class: (application.achiev_summa > 0 ? "label label-success" : "label label-default" )}= application.summa + application.achiev_summa

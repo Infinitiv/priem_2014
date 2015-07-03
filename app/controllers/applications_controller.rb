@@ -5,9 +5,10 @@ before_action :set_application, only: [:show]
     @applications = Application.order(:application_number).where(campaign_id: @default_campaign)
   end
   def show
+    @marks = @application.marks.joins(:entrance_test_item).where(entrance_test_items: {subject_id: [11, 4, 1]})
   end
   def import
-    Application.import(params[:file])
+    Application.import(params[:file], @default_campaign.id)
     redirect_to applications_url, notice: "Applications imported."
   end
   
@@ -17,8 +18,7 @@ before_action :set_application, only: [:show]
   end
   
   def errors
-    @errors = Application.errors
-    @campaigns = Campaign.all
+    @errors = Application.errors(@default_campaign)
   end
   
   def competition
@@ -36,6 +36,6 @@ before_action :set_application, only: [:show]
   private
 
   def set_application
-    @application = Application.includes([:education_documents, :identity_documents, :competitions]).find(params[:id])
+    @application = Application.includes([:education_document, :education_document_types, :identity_document, :identity_document_types, :competitions, :marks, :entrance_test_items, :institution_achievements]).find(params[:id])
   end
 end

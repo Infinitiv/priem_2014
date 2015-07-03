@@ -24,21 +24,14 @@
       %th Биология
       %th Русский язык
       %th Сумма
+      %th +10
   %tbody
     %tr
-      %td= @application.chemistry
-      %td= @application.biology
-      %td= @application.russian
+      %td= "#{@marks[0][:value]} (#{@marks[0][:form]})" if @marks[0]
+      %td= "#{@marks[1][:value]} (#{@marks[1][:form]})" if @marks[1]
+      %td= "#{@marks[2][:value]} (#{@marks[2][:form]})" if @marks[2]
       %td= @application.summa
-%p 
-  *Источник баллов - 
-  - case
-    - when @application.ege
-      ЕГЭ
-    - when @application.ege_additional
-      ЕГЭ в дополнительные сроки
-    - when @application.inner_exam
-      собственные испытания
+      %td= @application.achiev_summa
 %h2= "Льготы" if @application.olympionic || @application.benefit
 %p= "Олимпиада" if @application.olympionic
 %p= "Особое право поступления" if @application.benefit
@@ -54,15 +47,13 @@
   %dh= @application.region_id
 %h2 Документы
 %dl
-  - @application.identity_documents.each do |identity_document|
-    %dt
-      %h3 Документ, удостоверяющий личность
-      = identity_document.identity_document_type.name if identity_document.identity_document_type
-    %dd= identity_document.identity_document_data
-  - @application.education_documents.each do |education_document|
-    %dt
-      %h3 Документ об образовании
-      = education_document.education_document_type.name if education_document.education_document_type
-    %dd
-      = education_document.education_document_data
-      %span.label.label-success= @application.original_received_date if @application.original_received_date
+  %dt
+    %h3 Документ, удостоверяющий личность
+    = @application.identity_document.identity_document_type.name if @application.identity_document.identity_document_type
+  %dd= @application.identity_document.identity_document_data
+  %dt
+    %h3 Документ об образовании
+    = @application.education_document.education_document_type.name if @application.education_document.education_document_type
+  %dd
+    = @application.education_document.education_document_data
+    %span.label.label-success= @application.original_received_date if @application.original_received_date

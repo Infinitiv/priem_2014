@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150702130718) do
+ActiveRecord::Schema.define(version: 20150702200145) do
 
   create_table "admission_volumes", force: true do |t|
     t.integer  "campaign_id"
@@ -58,6 +58,13 @@ ActiveRecord::Schema.define(version: 20150702130718) do
     t.integer  "status_id",              default: 2
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "checked"
+    t.integer  "reg_number"
+  end
+
+  create_table "applications_institution_achievements", id: false, force: true do |t|
+    t.integer "institution_achievement_id", null: false
+    t.integer "application_id",             null: false
   end
 
   create_table "auth_data", force: true do |t|
@@ -97,10 +104,10 @@ ActiveRecord::Schema.define(version: 20150702130718) do
   create_table "competition_items", force: true do |t|
     t.string   "name",                      default: ""
     t.integer  "finance_source_id"
-    t.integer  "competitive_group_id"
     t.integer  "competitive_group_item_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "code"
   end
 
   create_table "competitions", force: true do |t|
@@ -222,6 +229,19 @@ ActiveRecord::Schema.define(version: 20150702130718) do
   end
 
   add_index "institution_achievements", ["campaign_id"], name: "index_institution_achievements_on_campaign_id", using: :btree
+
+  create_table "marks", force: true do |t|
+    t.integer  "application_id"
+    t.integer  "entrance_test_item_id"
+    t.integer  "value"
+    t.string   "form"
+    t.date     "checked"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "marks", ["application_id"], name: "index_marks_on_application_id", using: :btree
+  add_index "marks", ["entrance_test_item_id"], name: "index_marks_on_entrance_test_item_id", using: :btree
 
   create_table "queries", force: true do |t|
     t.string   "name",       default: ""

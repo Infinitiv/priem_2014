@@ -5,8 +5,7 @@ class EducationDocument < ActiveRecord::Base
   
   def self.import_from_row(row, application)
     accessible_attributes = column_names
-    education_documents = application.education_documents
-    education_document = education_documents.where(education_document_series: row["education_document_series"], education_document_number: row["education_document_number"]).first || education_documents.new
+    education_document = application.education_document || application.education_document.new
     education_document.attributes = row.to_hash.slice(*accessible_attributes)
     education_document.save!
   end

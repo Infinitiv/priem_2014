@@ -13,3 +13,10 @@ EntranceTestItem.create(competitive_group_id: 5, entrance_test_type_id: 1, form:
 EntranceTestItem.create(competitive_group_id: 5, entrance_test_type_id: 1, form: "ЕГЭ", min_score: 36, entrance_test_priority: 2, subject_id: 4)
 EntranceTestItem.create(competitive_group_id: 5, entrance_test_type_id: 1, form: "ЕГЭ", min_score: 36, entrance_test_priority: 3, subject_id: 1)
 CompetitiveGroup.find(5).update_attributes(name: "Специалитет 2015")
+CompetitionItem.find_by_name("стоматолоигя, общий конкурс, бюджет").update_attributes(name: "стоматология, общий конкурс, бюджет")
+CompetitionItem.all.each{|i| i.update_attributes(code: i.id)}
+CompetitionItem.all.each do |i|
+  old = i.slice(*['name', 'finance_source_id', 'code', 'competitive_group_item_id'])
+  old['competitive_group_item_id'] += 3
+  CompetitionItem.create(old)
+end
