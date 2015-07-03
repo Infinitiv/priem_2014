@@ -12,8 +12,8 @@
   - @application.competitions.order(:priority).each do |competition|
     %li
       = competition.competition_item.name
-      = " (#{@application.target_organization.target_organization_name})" if [7, 8, 9].include?(competition.competition_item_id) && @application.target_organization_id
-      = "- место в конкурсе - #{competition.rank}"
+      = " (#{@application.target_organization.target_organization_name})" if [7, 8, 9].include?(competition.competition_item.code) && @application.target_organization_id
+      = competition.rank
       %span.label.label-info= "рекомендован к зачислению #{competition.recommended_date}" if competition.recommended_date
       %span.label.label-success= "зачислен #{competition.admission_date}" if competition.admission_date
 %h2 Конкурсные баллы
@@ -24,14 +24,14 @@
       %th Биология
       %th Русский язык
       %th Сумма
-      %th +10
+      %th С учетом достижений
   %tbody
     %tr
       %td= "#{@marks[0][:value]} (#{@marks[0][:form]})" if @marks[0]
       %td= "#{@marks[1][:value]} (#{@marks[1][:form]})" if @marks[1]
       %td= "#{@marks[2][:value]} (#{@marks[2][:form]})" if @marks[2]
       %td= @application.summa
-      %td= @application.achiev_summa
+      %td= @application.summa + @application.achiev_summa
 %h2= "Льготы" if @application.olympionic || @application.benefit
 %p= "Олимпиада" if @application.olympionic
 %p= "Особое право поступления" if @application.benefit

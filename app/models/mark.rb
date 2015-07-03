@@ -1,5 +1,7 @@
 class Mark < ActiveRecord::Base
   belongs_to :entrance_test_item
+  belongs_to :application
+  has_many :competitions, through: :application
   
   def self.import_from_row(row, application)
     accessible_attributes = ['chemistry', 'biology', 'russian', 'chemistry_form', 'biology_form', 'russian_form']

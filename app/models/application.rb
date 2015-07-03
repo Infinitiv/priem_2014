@@ -91,7 +91,7 @@ class Application < ActiveRecord::Base
   
   def self.errors(default_campaign)
     errors = {}
-    applications = default_campaign.applications.includes([:identity_documents, :competitions])
+    applications = default_campaign.applications.includes([:identity_document, :competitions])
     target_competition_entrants_array = applications.select(:id).joins(:competition_items).where("competition_items.name like ?", "%целев%")
     errors[:dups_numbers] = find_dups_numbers(applications)
     errors[:lost_numbers] = find_lost_numbers(applications)
@@ -117,7 +117,7 @@ class Application < ActiveRecord::Base
   def self.find_dups_entrants(applications)
     find_dups_entrants = {}
     applications.each do |a|
-      sn = a.identity_documents.last.sn
+      sn = a.identity_document.sn
       find_dups_entrants[sn] ||= []
       find_dups_entrants[sn] << a
     end

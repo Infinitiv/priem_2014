@@ -5,8 +5,9 @@ class EducationDocument < ActiveRecord::Base
   
   def self.import_from_row(row, application)
     accessible_attributes = column_names
-    education_document = application.education_document || application.education_document.new
+    education_document = application.education_document || new
     education_document.attributes = row.to_hash.slice(*accessible_attributes)
+    education_document.application_id = application.id
     education_document.save!
   end
 

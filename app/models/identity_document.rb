@@ -5,8 +5,9 @@ class IdentityDocument < ActiveRecord::Base
   
     def self.import_from_row(row, application)
     accessible_attributes = column_names
-    identity_document = application.identity_document || application.identity_document.new
+    identity_document = application.identity_document || new
     identity_document.attributes = row.to_hash.slice(*accessible_attributes)
+    identity_document.application_id = application.id
     identity_document.save!
   end
 
