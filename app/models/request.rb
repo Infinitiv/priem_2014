@@ -339,7 +339,7 @@ class Request < ActiveRecord::Base
               id.DocumentNumber im.identity_document_number
               id.DocumentDate im.identity_document_date
               id.IdentityDocumentTypeID im.identity_document_type_id
-              id.NationalityTypeID am.nationality_type_id
+              id.NationalityTypeID am.nationality_type_id ? am.nationality_type_id : 1
               id.BirthDate am.birth_date
             end
             ad.EduDocuments do |eds|
