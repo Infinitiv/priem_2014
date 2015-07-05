@@ -1,7 +1,7 @@
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show]
   def index
-    @requests = Request.order(:id).paginate(:page => params[:page])
+    @requests = Request.order(id: :desc).paginate(:page => params[:page])
   end
   def show
     

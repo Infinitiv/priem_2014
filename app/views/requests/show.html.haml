@@ -4,8 +4,8 @@
   .panel-body
     %df
       %dt
-        %pre= @request.input
-      %dd
         %pre= @request.output
+      %dd
+        %pre= @request.input
   .btn
     = link_to 'К списку запросов', requests_path

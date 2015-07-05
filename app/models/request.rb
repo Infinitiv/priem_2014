@@ -350,14 +350,14 @@ class Request < ActiveRecord::Base
                   ed.SchoolCertificateDocument do |scd|
                     scd.OriginalReceived am.original_received_date ? true : false
                     scd.OriginalReceivedDate am.original_received_date if am.original_received_date
-                    scd.DocumentSeries em.education_document_series.to_s
+                    scd.DocumentSeries em.education_document_series.to_s if em.education_document_series
                     scd.DocumentNumber em.education_document_number.to_s
                   end
                 when 5
                   ed.MiddleEduDiplomaDocument do |medd|
                     medd.OriginalReceived am.original_received_date ? true : false
                     medd.OriginalReceivedDate am.original_received_date if am.original_received_date
-                    medd.DocumentSeries em.education_document_series.to_s
+                    medd.DocumentSeries em.education_document_series ? em.education_document_series.to_s : "no series"
                     medd.DocumentNumber em.education_document_number.to_s
                   end
                 when 4
