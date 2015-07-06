@@ -21,7 +21,7 @@ class Competition < ActiveRecord::Base
     campaign_id = application.campaign_id
     summa = application.summa + application.achiev_summa
     applications = Application.where(campaign_id: campaign_id).joins(:institution_achievements).map(&:id)
-    "(место в конкурсе - #{rank_all(campaign_id, summa, applications)}, с учетом оригиналов - #{rank_original_only(campaign_id, summa, applications)})"
+    application.original_received_date ? "(место в конкурсе - #{rank_all(campaign_id, summa, applications)}, с учетом оригиналов - #{rank_original_only(campaign_id, summa, applications)})" : "(место в конкурсе - #{rank_all(campaign_id, summa, applications)}"
   end
   
   def rank_target
