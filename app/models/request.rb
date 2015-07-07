@@ -373,6 +373,12 @@ class Request < ActiveRecord::Base
                 end
               end
             end
+            unless am.institution_achievements.empty?
+              ad.CustomDocument do |cd|
+                cd.UID am.education_document.id
+                cd.DocumentTypeNameText "AchievementDocument"
+              end
+            end
           end
           unless am.institution_achievements.empty?
             a.IndividualAchievements do |ias|
