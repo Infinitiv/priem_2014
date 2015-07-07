@@ -374,9 +374,11 @@ class Request < ActiveRecord::Base
               end
             end
             unless am.institution_achievements.empty?
-              ad.CustomDocument do |cd|
-                cd.UID am.education_document.id
-                cd.DocumentTypeNameText "AchievementDocument"
+              ad.CustomDocuments do |cds|
+                cds.CustomDocument do |cd|
+                  cd.UID am.education_document.id
+                  cd.DocumentTypeNameText "AchievementDocument"
+                end
               end
             end
           end
