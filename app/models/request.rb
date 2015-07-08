@@ -348,7 +348,6 @@ class Request < ActiveRecord::Base
                 case em.education_document_type_id
                 when 1
                   ed.SchoolCertificateDocument do |scd|
-                    scd.UID em.id
                     scd.OriginalReceived am.original_received_date ? true : false
                     scd.OriginalReceivedDate am.original_received_date if am.original_received_date
                     scd.DocumentSeries em.education_document_series.to_s if em.education_document_series
@@ -356,7 +355,6 @@ class Request < ActiveRecord::Base
                   end
                 when 5
                   ed.MiddleEduDiplomaDocument do |medd|
-                    medd.UID em.id
                     medd.OriginalReceived am.original_received_date ? true : false
                     medd.OriginalReceivedDate am.original_received_date if am.original_received_date
                     medd.DocumentSeries em.education_document_series ? em.education_document_series.to_s : "no series"
@@ -364,7 +362,6 @@ class Request < ActiveRecord::Base
                   end
                 when 4
                   ed.HighEduDiplomaDocument do |hedd|
-                    hedd.UID em.id
                     hedd.OriginalReceived am.original_received_date ? true : false
                     hedd.OriginalReceivedDate am.original_received_date if am.original_received_date
                     hedd.DocumentSeries em.education_document_series.to_s
