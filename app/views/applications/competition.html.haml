@@ -1,31 +1,32 @@
 %h1 Ожидаемое зачисление по квоте особого права
 %h2 Лечебное дело
-= render partial: 'competition_list', locals: {competitive_item_id: 10}
+= render partial: 'competition_list', locals: {competitive_item_id: 47}
 %h2 Педиатрия
-= render partial: 'competition_list', locals: {competitive_item_id: 11}
+= render partial: 'competition_list', locals: {competitive_item_id: 48}
 %h2 Стоматология
-= render partial: 'competition_list', locals: {competitive_item_id: 12}
+= render partial: 'competition_list', locals: {competitive_item_id: 49}
 %h1 Ожидаемое зачисление по квоте целевого приема
 %h2 Лечебное дело
-= render partial: 'competition_list', locals: {competitive_item_id: 7}
+= render partial: 'competition_list', locals: {competitive_item_id: 44}
 %h2 Педиатрия
-= render partial: 'competition_list', locals: {competitive_item_id: 8}
+= render partial: 'competition_list', locals: {competitive_item_id: 45}
 %h2 Стоматология
-= render partial: 'competition_list', locals: {competitive_item_id: 9}
+= render partial: 'competition_list', locals: {competitive_item_id: 46}
 %h1 Ожидаемое зачисление по общему конкурсу
 %h2 Лечебное дело
-= render partial: 'competition_list', locals: {competitive_item_id: 1}
+= render partial: 'competition_list', locals: {competitive_item_id: 38}
 %h2 Педиатрия
-= render partial: 'competition_list', locals: {competitive_item_id: 2}
+= render partial: 'competition_list', locals: {competitive_item_id: 39}
 %h2 Стоматология
-= render partial: 'competition_list', locals: {competitive_item_id: 3}
+= render partial: 'competition_list', locals: {competitive_item_id: 40}
 %h1 Ожидаемое зачисление на места с оплатой стоимости обучения
 %h2 Лечебное дело
-= render partial: 'competition_list', locals: {competitive_item_id: 4}
+= render partial: 'competition_list', locals: {competitive_item_id: 41}
 %h2 Педиатрия
-= render partial: 'competition_list', locals: {competitive_item_id: 5}
+= render partial: 'competition_list', locals: {competitive_item_id: 42}
 %h2 Стоматология
-= render partial: 'competition_list', locals: {competitive_item_id: 6}
+= render partial: 'competition_list', locals: {competitive_item_id: 43}
+%p= @applications_hash
 %p= @applications_hash.count
 %table.table
   %thead
