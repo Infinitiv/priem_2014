@@ -6,7 +6,7 @@ namespace :ls_gen do
     campaign = Campaign.find(3)
     competition_items = campaign.competition_items
     competition_items.each do |i|
-      data = i.applications.select(:application_number, :entrant_last_name, :entrant_first_name, :entrant_middle_name).sort_by(&:entrant_first_name).sort_by(&:entrant_last_name)
+      data = i.applications.where(last_deny_day: nil).select(:application_number, :entrant_last_name, :entrant_first_name, :entrant_middle_name).sort_by(&:entrant_first_name).sort_by(&:entrant_last_name)
       h[i.name] = data unless data.empty?
     end
     pdf = Prawn::Document.new(page_size: "A4", :info => {
