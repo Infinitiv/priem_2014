@@ -84,7 +84,7 @@ class Application < ActiveRecord::Base
   def self.ege_to_txt(applications)
     ege_to_txt = ""
     applications.each do |application|
-      ege_to_txt += "#{[application.entrant_last_name, application.entrant_first_name, application.entrant_middle_name].join('%')}%#{[application.identity_documents.last.identity_document_series, application.identity_documents.last.identity_document_number].join('%')}\r\n"
+      ege_to_txt += "#{[application.entrant_last_name, application.entrant_first_name, application.entrant_middle_name].join('%')}%#{[application.identity_document.identity_document_series, application.identity_document.identity_document_number].join('%')}\r\n"
     end
     ege_to_txt.encode("cp1251")
   end
