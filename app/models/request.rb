@@ -464,7 +464,7 @@ class Request < ActiveRecord::Base
       @a.each do |am|
 	as.Application do |a|
 	  a.ApplicationNumber [am.campaign.year_start, "%04d" % am.application_number].join('-')
-	  a.RegistrationDate am.registration_date.to_datetime
+	  a.RegistrationDate (am.registration_date.to_datetime - 1).to_s.gsub('T00:00', 'T23:00')
 	end
 	as.Application do |a|
 	  a.ApplicationNumber [am.campaign.year_start, "%04d" % am.application_number].join('-')
