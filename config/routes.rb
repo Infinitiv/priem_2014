@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       get 'errors'
       get 'competition'
       get 'ege_to_txt'
+      get 'competition_lists'
     end
   end
   # Example resource route with options:

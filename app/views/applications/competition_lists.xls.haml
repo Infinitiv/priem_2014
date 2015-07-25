@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+%Workbook{'xmlns' => "urn:schemas-microsoft-com:office:spreadsheet", 
+   'xmlns:o' => "urn:schemas-microsoft-com:office:office",
+   'xmlns:x' => "urn:schemas-microsoft-com:office:excel",
+   'xmlns:ss' => "urn:schemas-microsoft-com:office:spreadsheet",
+   'xmlns:html' => "http://www.w3.org/TR/REC-html40"}
+  %DocumentProperties{'xmlns' => "urn:schemas-microsoft-com:office:office"}
+    %Created= Time.now
+    %Company ISMA
+  %Styles
+    %Style{"ss:ID" => "thead"}
+      <Font ss:Bold="1"/>
+  - @competition_items.each do |i|
+    - applications = @applications_hash.select{|a, h| h[:competitions].include?(i.id)}
+    - unless applications.empty?
+      %Worksheet{'ss:Name' => i.name}
+        - unless i.name =~ /целев/
+          %Table
+            <ss:Column ss:AutoFitWidth="1"/>
+            <ss:Column ss:AutoFitWidth="1"/>
+            <ss:Column ss:AutoFitWidth="1"/>
+            %Row{"ss:StyleID" => "thead"}
+              %Cell
+                %Data{"ss:Type" => "String"} №
+              %Cell
+                %Data{"ss:Type" => "String"} Номер дела
+              %Cell
+                %Data{"ss:Type" => "String"} Ф.И.О.
+              %Cell
+                %Data{"ss:Type" => "String"} Химия
+              %Cell
+                %Data{"ss:Type" => "String"} Биология
+              %Cell
+                %Data{"ss:Type" => "String"} Русский язык
+              %Cell
+                %Data{"ss:Type" => "String"} Сумма
+              %Cell
+                %Data{"ss:Type" => "String"} Сумма за индивидуальные достижения
+              %Cell
+                %Data{"ss:Type" => "String"} Конкурсный балл
+              %Cell
+                %Data{"ss:Type" => "String"} Оригинал/Копия
+              %Cell
+                %Data{"ss:Type" => "String"} Приоритет этого конкурса
+            - n = 0
+            - applications.each do |a, h|
+              - n += 1
+              %Row
+                %Cell
+                  %Data{"ss:Type" => "Number"}= n.to_s + "."
+                %Cell
+                  %Data{"ss:Type" => "String"}= "%04d" % a.application_number
+                %Cell
+                  %Data{"ss:Type" => "String"}= [a.entrant_last_name, a.entrant_first_name, a.entrant_middle_name].compact.join(" ")
+                %Cell
+                  %Data{"ss:Type" => "Number"}= h[:chemistry]
+                %Cell
+                  %Data{"ss:Type" => "Number"}= h[:biology]
+                %Cell
+                  %Data{"ss:Type" => "Number"}= h[:russian]
+                %Cell
+                  %Data{"ss:Type" => "Number"}= h[:summa]
+                %Cell
+                  - if h[:achievement] == 10
+                    %Data{"ss:Type" => "Number"}= h[:achievement]
+                %Cell
+                  %Data{"ss:Type" => "Number"}= h[:full_summa]
+                %Cell
+                  %Data{"ss:Type" => "String"}= h[:original_received] ? "Оригинал" : "Копия"
+                %Cell
+                  %Data{"ss:Type" => "Number"}= h[:competitions].index(i.id) + 1
+        - else
+          - @target_ortanizations.each do |t|
+            - target_applications = applications.select{|a, h| a[:target_organization_id] == t.id}
+            - unless target_applications.empty?
+              %Table
+                %Row
+                  %Cell
+                    %Data{"ss:Type" => "String"}= t.target_organization_name
+                %Row{"ss:StyleID" => "thead"}
+                  %Cell
+                    %Data{"ss:Type" => "String"} №
+                  %Cell
+                    %Data{"ss:Type" => "String"} Номер дела
+                  %Cell
+                    %Data{"ss:Type" => "String"} Ф.И.О.
+                  %Cell
+                    %Data{"ss:Type" => "String"} Химия
+                  %Cell
+                    %Data{"ss:Type" => "String"} Биология
+                  %Cell
+                    %Data{"ss:Type" => "String"} Русский язык
+                  %Cell
+                    %Data{"ss:Type" => "String"} Сумма
+                  %Cell
+                    %Data{"ss:Type" => "String"} Сумма за индивидуальные достижения
+                  %Cell
+                    %Data{"ss:Type" => "String"} Конкурсный балл
+                  %Cell
+                    %Data{"ss:Type" => "String"} Приоритет этого конкурса
+                - n = 0
+                - target_applications.each do |a, h|
+                  - n += 1
+                  %Row
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= n.to_s + "."
+                    %Cell
+                      %Data{"ss:Type" => "String"}= "%04d" % a.application_number
+                    %Cell
+                      %Data{"ss:Type" => "String"}= [a.entrant_last_name, a.entrant_first_name, a.entrant_middle_name].compact.join(" ")
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= h[:chemistry]
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= h[:biology]
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= h[:russian]
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= h[:summa]
+                    %Cell
+                      - if h[:achievement] == 10
+                        %Data{"ss:Type" => "Number"}= h[:achievement]
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= h[:full_summa]
+                    %Cell
+                      %Data{"ss:Type" => "Number"}= h[:competitions].index(i.id) + 1
+                %Row
+          
+    

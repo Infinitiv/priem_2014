@@ -1,0 +1,72 @@
+- @competition_items.each do |i|
+  - applications = @applications_hash.select{|a, h| h[:competitions].include?(i.id)}
+  - unless applications.empty?
+    %h2= i.name
+    - unless i.name =~ /целев/
+      %table.table
+        %thead
+          %tr
+            %th №
+            %th Номер дела
+            %th Ф.И.О.
+            %th Химия
+            %th Биология
+            %th Русский язык
+            %th Сумма
+            %th Сумма за индивидуальные достижения
+            %th Конкурсный балл
+            %th Оригинал/Копия
+            %th Приоритет этого конкурса
+        %tbody
+          - n = 0
+          - applications.each do |a, h|
+            - n += 1
+            %tr
+              %td= n.to_s + "."
+              %td= "%04d" % a.application_number
+              %td= [a.entrant_last_name, a.entrant_first_name, a.entrant_middle_name].compact.join(" ")
+              %td= h[:chemistry]
+              %td= h[:biology]
+              %td= h[:russian]
+              %td= h[:summa]
+              %td= h[:achievement]
+              %td= h[:full_summa]
+              %td= h[:original_received] ? "Оригинал" : "Копия"
+              %td= h[:competitions].index(i.id) + 1
+    - else
+      - @target_ortanizations.each do |t|
+        - target_applications = applications.select{|a, h| a[:target_organization_id] == t.id}
+        - unless target_applications.empty?
+          %h3= t.target_organization_name
+          %table.table
+            %thead
+              %tr
+                %th №
+                %th Номер дела
+                %th Ф.И.О.
+                %th Химия
+                %th Биология
+                %th Русский язык
+                %th Сумма
+                %th Сумма за индивидуальные достижения
+                %th Конкурсный балл
+                %th Оригинал/Копия
+                %th Приоритет этого конкурса
+            %tbody
+              - n = 0
+              - target_applications.each do |a, h|
+                - n += 1
+                %tr
+                  %td= n.to_s + "."
+                  %td= "%04d" % a.application_number
+                  %td= [a.entrant_last_name, a.entrant_first_name, a.entrant_middle_name].compact.join(" ")
+                  %td= h[:chemistry]
+                  %td= h[:biology]
+                  %td= h[:russian]
+                  %td= h[:summa]
+                  %td= h[:achievement]
+                  %td= h[:full_summa]
+                  %td= h[:original_received] ? "Оригинал" : "Копия"
+                  %td= h[:competitions].index(i.id) + 1
+          
+    

@@ -25,6 +25,16 @@ before_action :set_application, only: [:show]
     @applications_hash = Application.competition(@default_campaign)
   end
   
+  def competition_lists
+    @competition_items = @default_campaign.competition_items
+    @target_ortanizations = @default_campaign.target_organizations.uniq
+    @applications_hash = Application.competition_lists(@default_campaign)
+    respond_to do |format|
+      format.html
+      format.xls
+    end
+  end
+  
   def ege_to_txt
     applications = Application.includes(:identity_document).where(campaign_id: @default_campaign, last_deny_day: nil)
     ege_to_txt = Application.ege_to_txt(applications)

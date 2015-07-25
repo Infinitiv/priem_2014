@@ -133,9 +133,9 @@ class Application < ActiveRecord::Base
   end
   
   def self.competition(default_campaign)
-    achiev_apps = applications = Application.where(campaign_id: default_campaign).joins(:institution_achievements).map(&:id)
-    marks = Mark.joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| applications.include?(a) ? {a => ms.map{|m| m.value}.sum + 10} : {a => ms.map{|m| m.value}.sum}}.inject(:merge)
     applications = Application.includes(:marks, :competitions).where(campaign_id: 3).where.not(original_received_date: nil).select{|a| a.marks.map(&:value).select{|m| m > 35}.count == 3}
+    achiev_apps = Application.where(campaign_id: 3).joins(:institution_achievements).map(&:id)
+    marks = Mark.joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| achiev_apps.include?(a) ? {a => ms.map{|m| m.value}.sum + 10} : {a => ms.map{|m| m.value}.sum}}.inject(:merge)
     
     applications_hash = {}
     applications.each do |application|
@@ -221,5 +221,25 @@ class Application < ActiveRecord::Base
       end
     end
     applications_hash
+  end
+  
+  def self.competition_lists(default_campaign)
+    applications = Application.select([:id, :application_number, :entrant_last_name, :entrant_first_name, :entrant_middle_name, :campaign_id, :original_received_date, :last_deny_day, :target_organization_id]).includes(:marks, :competitions).where(campaign_id: default_campaign, last_deny_day: nil).select{|a| a.marks.map(&:value).select{|m| m > 35}.count == 3}
+    achiev_apps = Application.where(campaign_id: default_campaign).joins(:institution_achievements).map(&:id)
+    marks = Mark.order(:entrance_test_item_id).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| {a => ms.map{|m| m.value}}}.inject(:merge)
+    competitions = Competition.order(:priority).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge)
+    applications_hash = {}
+    applications.each do |application|
+      applications_hash[application] = {}
+      applications_hash[application][:chemistry] = marks[application.id][2]
+      applications_hash[application][:biology] = marks[application.id][1]
+      applications_hash[application][:russian] = marks[application.id][0]
+      applications_hash[application][:achievement] = achiev_apps.include?(application.id) ? 10 : 0
+      applications_hash[application][:summa] = marks[application.id].sum
+      applications_hash[application][:full_summa] = [applications_hash[application][:summa], applications_hash[application][:achievement]].sum
+      applications_hash[application][:competitions] = competitions[application.id]
+      applications_hash[application][:original_received] = true if application.original_received_date
+    end
+    @applications_hash = applications_hash.sort_by{|k, v| [v[:full_summa], v[:summa], v[:chemistry], v[:biology], v[:russian]]}.reverse
   end
 end
