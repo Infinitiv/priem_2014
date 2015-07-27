@@ -231,9 +231,9 @@ class Application < ActiveRecord::Base
     applications_hash = {}
     applications.each do |application|
       applications_hash[application] = {}
-      applications_hash[application][:chemistry] = marks[application.id][2]
+      applications_hash[application][:chemistry] = marks[application.id][0]
       applications_hash[application][:biology] = marks[application.id][1]
-      applications_hash[application][:russian] = marks[application.id][0]
+      applications_hash[application][:russian] = marks[application.id][2]
       applications_hash[application][:achievement] = achiev_apps.include?(application.id) ? 10 : 0
       applications_hash[application][:summa] = marks[application.id].sum
       applications_hash[application][:full_summa] = [applications_hash[application][:summa], applications_hash[application][:achievement]].sum
