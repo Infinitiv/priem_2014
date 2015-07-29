@@ -49,11 +49,9 @@ class Application < ActiveRecord::Base
       ActiveRecord::Base.transaction do
         group.each do |i|
           row = Hash[[header, spreadsheet.row(i)].transpose]
-          application = where(application_number: row["application_number"], campaign_id: default_campaign).first
-          competition = application.competitions.where(competition_item_id: row["competition_item_id"]).first
-          competition.recommended_date = row["recommended_date"]
-          competition.admission_date = row["admission_date"]
-          competition.save!
+          competitions = Competition.joins(:application).where(applications: {application_number: row["application_number"], campaign_id: default_campaign})
+          competitions.where.not(admission_date: nil).each{|c| c.update_attributes(admission_date: nil)}
+          competitions.joins(:competition_item).where(competition_items: {code: row["competition_item_id"]}).each{|c| c.update_attributes(admission_date: row["admission_date"])}
         end
       end
     end

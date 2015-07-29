@@ -13,7 +13,7 @@ before_action :set_application, only: [:show]
   end
   
   def import_recommended
-    Application.import_recommended(params[:file])
+    Application.import_recommended(params[:file], @default_campaign)
     redirect_to applications_url, notice: "Recommended imported."
   end
   
