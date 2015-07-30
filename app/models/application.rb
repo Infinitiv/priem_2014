@@ -222,10 +222,17 @@ class Application < ActiveRecord::Base
   end
   
   def self.competition_lists(default_campaign)
-    applications = Application.select([:id, :application_number, :entrant_last_name, :entrant_first_name, :entrant_middle_name, :campaign_id, :original_received_date, :last_deny_day, :target_organization_id]).includes(:marks, :competitions).where(campaign_id: default_campaign, last_deny_day: nil).select{|a| a.marks.map(&:value).select{|m| m > 35}.count == 3}
+    applications = Application.select([:id, :application_number, :entrant_last_name, :entrant_first_name, :entrant_middle_name, :campaign_id, :original_received_date, :last_deny_day, :target_organization_id]).includes(:marks, :competitions).where(campaign_id: default_campaign, last_deny_day: nil).limit(10).select{|a| a.marks.map(&:value).select{|m| m > 35}.count == 3}
     achiev_apps = Application.where(campaign_id: default_campaign).joins(:institution_achievements).map(&:id)
     marks = Mark.order(:entrance_test_item_id).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| {a => ms.map{|m| m.value}}}.inject(:merge)
     competitions = Competition.order(:priority).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge)
+    admissed_competitions = Competition.order(:priority).joins(:application).where(applications: {campaign_id: default_campaign}).where.not(admission_date: nil).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge) || []
+    admissed_competitions.each do |a, acs|
+      ac = acs.first
+      cs = competitions[a]
+      i = cs.index(ac)
+      cs.delete_if{|c| cs.index(c) >= i} if i
+    end
     applications_hash = {}
     applications.each do |application|
       applications_hash[application] = {}
