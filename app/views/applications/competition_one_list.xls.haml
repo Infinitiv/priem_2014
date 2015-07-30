@@ -41,7 +41,7 @@
             %Data{"ss:Type" => "String"} Приоритеты конкурсов
         - n = 0
         - applications.each do |a, h|
-          - unless.h[:competitions].empty?
+          - unless h[:competitions].empty?
             - n += 1
             %Row
               %Cell
