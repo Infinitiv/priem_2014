@@ -70,6 +70,7 @@
               %Cell
                 %Data{"ss:Type" => "String"}= h[:original_received] ? "Оригинал" : "Копия"
               %Cell
-                %Data{"ss:Type" => "String"}= @competition_items.where(id: h[:competitions]).map{|i| i.code}.join(" ")
+                - cs = @competition_items.map{|i| {i.id => i.code}}.inject(:merge)
+                %Data{"ss:Type" => "String"}= h[:competitions].map{|i| cs[i]}.join(" ")
           
     
