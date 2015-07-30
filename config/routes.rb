@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       get 'competition'
       get 'ege_to_txt'
       get 'competition_lists'
+      get 'competition_one_list'
     end
   end
   # Example resource route with options:
