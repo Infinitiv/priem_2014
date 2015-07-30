@@ -41,34 +41,35 @@
             %Data{"ss:Type" => "String"} Приоритеты конкурсов
         - n = 0
         - applications.each do |a, h|
-          - n += 1
-          %Row
-            %Cell
-              %Data{"ss:Type" => "Number"}= n.to_s + "."
-            %Cell
-              %Data{"ss:Type" => "String"}= "%04d" % a.application_number
-            %Cell
-              %Data{"ss:Type" => "String"}= [a.entrant_last_name, a.entrant_first_name, a.entrant_middle_name].compact.join(" ")
-            %Cell
-              %Data{"ss:Type" => "Number"}= h[:chemistry]
-            %Cell
-              %Data{"ss:Type" => "Number"}= h[:biology]
-            %Cell
-              %Data{"ss:Type" => "Number"}= h[:russian]
-            %Cell
-              %Data{"ss:Type" => "Number"}= h[:summa]
-            %Cell
-              - if h[:achievement] == 10
-                %Data{"ss:Type" => "Number"}= h[:achievement]
-            %Cell
-              %Data{"ss:Type" => "Number"}= h[:full_summa]
-            %Cell
-              - @target_ortanizations.each do |t|
-                - if a[:target_organization_id] == t.id
-                  %Data{"ss:Type" => "String"}= t.target_organization_name 
-            %Cell
-              %Data{"ss:Type" => "String"}= h[:original_received] ? "Оригинал" : "Копия"
-            %Cell
-              %Data{"ss:Type" => "String"}= @competition_items.where(id: h[:competitions]).map{|i| i.code}.join(" ")
+          - unless.h[:competitions].empty?
+            - n += 1
+            %Row
+              %Cell
+                %Data{"ss:Type" => "Number"}= n.to_s + "."
+              %Cell
+                %Data{"ss:Type" => "String"}= "%04d" % a.application_number
+              %Cell
+                %Data{"ss:Type" => "String"}= [a.entrant_last_name, a.entrant_first_name, a.entrant_middle_name].compact.join(" ")
+              %Cell
+                %Data{"ss:Type" => "Number"}= h[:chemistry]
+              %Cell
+                %Data{"ss:Type" => "Number"}= h[:biology]
+              %Cell
+                %Data{"ss:Type" => "Number"}= h[:russian]
+              %Cell
+                %Data{"ss:Type" => "Number"}= h[:summa]
+              %Cell
+                - if h[:achievement] == 10
+                  %Data{"ss:Type" => "Number"}= h[:achievement]
+              %Cell
+                %Data{"ss:Type" => "Number"}= h[:full_summa]
+              %Cell
+                - @target_ortanizations.each do |t|
+                  - if a[:target_organization_id] == t.id
+                    %Data{"ss:Type" => "String"}= t.target_organization_name 
+              %Cell
+                %Data{"ss:Type" => "String"}= h[:original_received] ? "Оригинал" : "Копия"
+              %Cell
+                %Data{"ss:Type" => "String"}= @competition_items.where(id: h[:competitions]).map{|i| i.code}.join(" ")
           
     
