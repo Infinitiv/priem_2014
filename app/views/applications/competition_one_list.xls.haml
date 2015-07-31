@@ -64,7 +64,7 @@
               %Cell
                 %Data{"ss:Type" => "Number"}= h[:full_summa]
               %Cell
-                - @target_ortanizations.each do |t|
+                - @target_organizations.each do |t|
                   - if a[:target_organization_id] == t.id
                     %Data{"ss:Type" => "String"}= t.target_organization_name 
               %Cell

@@ -131,20 +131,25 @@ class Application < ActiveRecord::Base
   end
   
   def self.competition(default_campaign)
-    applications = Application.includes(:marks, :competitions).where(campaign_id: 3).where.not(original_received_date: nil).select{|a| a.marks.map(&:value).select{|m| m > 35}.count == 3}
-    achiev_apps = Application.where(campaign_id: 3).joins(:institution_achievements).map(&:id)
-    marks = Mark.joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| achiev_apps.include?(a) ? {a => ms.map{|m| m.value}.sum + 10} : {a => ms.map{|m| m.value}.sum}}.inject(:merge)
+    applications = Application.select([:id, :application_number, :entrant_last_name, :entrant_first_name, :entrant_middle_name, :campaign_id, :original_received_date, :last_deny_day, :target_organization_id]).includes(:marks, :competitions).where(campaign_id: default_campaign, last_deny_day: nil).where.not(original_received_date: nil).select{|a| a.marks.map(&:value).select{|m| m > 35}.count == 3}
+    achiev_apps = Application.where(campaign_id: default_campaign).joins(:institution_achievements).map(&:id)
+    marks = Mark.order(:entrance_test_item_id).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| {a => ms.map{|m| m.value}}}.inject(:merge)
+    competitions = Competition.order(:priority).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge)
     
     applications_hash = {}
     applications.each do |application|
-      competitions_hash = {}
-      application.competitions.order(:priority).each{|competition| competitions_hash[competition.competition_item_id] = competition.priority}
       applications_hash[application] = {}
-      applications_hash[application][:summa] = marks[application.id]
-      applications_hash[application][:competitions] = competitions_hash
-      applications_hash[application][:enrolled] = false
+      applications_hash[application][:chemistry] = marks[application.id][0]
+      applications_hash[application][:biology] = marks[application.id][1]
+      applications_hash[application][:russian] = marks[application.id][2]
+      applications_hash[application][:achievement] = achiev_apps.include?(application.id) ? 10 : 0
+      applications_hash[application][:summa] = marks[application.id].sum
+      applications_hash[application][:full_summa] = [applications_hash[application][:summa], applications_hash[application][:achievement]].sum
+      applications_hash[application][:competitions] = competitions[application.id]
+      applications_hash[application][:original_received] = true if application.original_received_date
     end
-    applications_hash = applications_hash.sort_by{|k, v| v[:summa]}.reverse
+    applications_hash = applications_hash.sort_by{|k, v| [v[:full_summa], v[:summa], v[:chemistry], v[:biology], v[:russian]]}.reverse
+    
     admission_volume_hash = {}
     default_campaign.competitive_group_items.each do |av|
       admission_volume_hash[av.direction_id] = {}
@@ -173,51 +178,28 @@ class Application < ActiveRecord::Base
     competitions[47] = admission_volume_hash[438][:number_quota_o]
     competitions[48] = admission_volume_hash[441][:number_quota_o]
     competitions[49] = admission_volume_hash[470][:number_quota_o]
-    applications_hash.select{|k, v| (v[:competitions].keys & (50..55).to_a).length > 0}.each do |k, v|
-      v[:competitions].each do |competition, priority|
-        if competitions[competition] > 0
-          competitions[competition] -= 1
-          competitions[v[:enrolled]] += 1 if v[:enrolled] 
-          v[:enrolled] = competition
-          v[:competitions].delete_if{|key, value| value > v[:competitions][competition]}
-        end
-      end
-    end
-    applications_hash.select{|k, v| (v[:competitions].keys & (47..49).to_a).length > 0}.each do |k, v|
-      v[:competitions].each do |competition, priority|
-        if  competitions[competition] > 0
-          competitions[competition] -= 1
-          competitions[v[:enrolled]] += 1 if v[:enrolled]
-          v[:enrolled] = competition
-          v[:competitions].delete_if{|key, value| value > v[:competitions][competition]}
-        end
-      end
-    end
-    applications_hash.select{|k, v| (v[:competitions].keys & (44..46).to_a).length > 0}.each do |k, v|
-      v[:competitions].select{|k, v| (44..46).to_a.include?(k)}.each do |competition, priority|
-        competitions.select{|c| (44..46).to_a.include?(c)}[competition].each do |ts|
-          if ts[k.target_organization_id] && ts[k.target_organization_id] > 0
-            competitions[competition][k.target_organization_id] -= 1
-            competitions[v[:enrolled]] += 1 if v[:enrolled]
-            v[:enrolled] = competition
-            v[:competitions].delete_if{|key, value| value > v[:competitions][competition]}
+    
+    
+    applications_hash.each do |k, v|
+      v[:competitions].each do |c|
+        unless v[:enrolled]
+          if (44..46).to_a.include?(c) 
+            if competitions[c][k.target_organization_id] && competitions[c][k.target_organization_id] > 0
+              competitions[c][k.target_organization_id] -= 1
+              v[:enrolled] = c
+              v[:competitions].delete_if{|c| v[:competitions].index(c) > v[:competitions].index(v[:enrolled])}
+            end
+          else
+            if competitions[c] > 0
+              competitions[c] -= 1
+              v[:enrolled] = c
+              v[:competitions].delete_if{|c| v[:competitions].index(c) > v[:competitions].index(v[:enrolled])}
+            end
           end
         end
       end
     end
-    competitions[38] += competitions[44].values.sum + competitions[47]
-    competitions[39] += competitions[45].values.sum + competitions[48]
-    competitions[40] += competitions[46].values.sum + competitions[49]
-    applications_hash.select{|k, v| (v[:competitions].keys & (38..43).to_a).length > 0}.each do |k, v|
-      v[:competitions].each do |competition, priority|
-        if  competitions.select{|c| (38..43).to_a.include?(c)}[competition] > 0
-          competitions[competition] -= 1
-          competitions[v[:enrolled]] += 1 if v[:enrolled]
-          v[:enrolled] = competition
-          v[:competitions].delete_if{|key, value| value > v[:competitions][competition]}
-        end
-      end
-    end
+
     applications_hash
   end
   

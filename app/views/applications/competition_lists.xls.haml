@@ -70,7 +70,7 @@
                 %Cell
                   %Data{"ss:Type" => "Number"}= h[:competitions].index(i.id) + 1
         - else
-          - @target_ortanizations.each do |t|
+          - @target_organizations.each do |t|
             - target_applications = applications.select{|a, h| a[:target_organization_id] == t.id}
             - unless target_applications.empty?
               %Table

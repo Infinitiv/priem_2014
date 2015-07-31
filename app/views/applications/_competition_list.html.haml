@@ -1,3 +1,12 @@
-%ol
-  - @applications_hash.select{|k, v| v[:enrolled] == competitive_item_id}.each do |k, v|
-    %li= link_to "#{"%04d" % k.application_number} #{k.fio} #{k.summa}", application_path(k)
+- if (44..46).to_a.include?(competitive_item_id)
+  - @target_organizations.each do |t|
+    - applications = @applications_hash.select{|k, v| v[:enrolled] == competitive_item_id && k.target_organization_id == t.id}
+    %h3= t.target_organization_name unless applications.empty?
+    %ol
+      - applications.each do |k, v|
+        %li= link_to "#{"%04d" % k.application_number} #{[k.entrant_last_name, k.entrant_first_name, k.entrant_middle_name].compact.join(' ')} #{v[:full_summa]}", application_path(k)
+- else
+  - applications = @applications_hash.select{|k, v| v[:enrolled] == competitive_item_id}
+  %ol
+    - applications.each do |k, v|
+      %li= link_to "#{"%04d" % k.application_number} #{[k.entrant_last_name, k.entrant_first_name, k.entrant_middle_name].compact.join(' ')} #{v[:full_summa]}", application_path(k)
