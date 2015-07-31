@@ -186,16 +186,17 @@ class Application < ActiveRecord::Base
           if (44..46).to_a.include?(c) 
             if competitions[c][k.target_organization_id] && competitions[c][k.target_organization_id] > 0
               competitions[c][k.target_organization_id] -= 1
+              v[:competitions] - [c] if v[:enrolled]
               v[:enrolled] = c
-              v[:competitions].delete_if{|c| v[:competitions].index(c) > v[:competitions].index(v[:enrolled])}
             end
           else
             if competitions[c] > 0
               competitions[c] -= 1
               v[:enrolled] = c
-              v[:competitions].delete_if{|c| v[:competitions].index(c) > v[:competitions].index(v[:enrolled])}
             end
           end
+        else
+           v[:competitions] - [c]
         end
       end
     end
