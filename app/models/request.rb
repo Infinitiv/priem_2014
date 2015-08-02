@@ -448,7 +448,7 @@ class Request < ActiveRecord::Base
           ooa.Application do |am|
             am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
             am.RegistrationDate a.registration_date.to_datetime
-            am.OrderIdLevelBudget 1 if finance_source == 14
+            am.OrderIdLevelBudget 1 unless finance_source == 15
           end
           ooa.OrderOfAdmissionUID "#{direction}-11-#{finance_source}-5-#{stage}"
           ooa.DirectionID direction
