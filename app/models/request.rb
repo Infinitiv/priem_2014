@@ -441,14 +441,15 @@ class Request < ActiveRecord::Base
     root.OrdersOfAdmission do |ooas|
       as.each do |a|
         ooas.OrderOfAdmission do |ooa|
-          ooa.Application do |am|
-            am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
-            am.RegistrationDate a.registration_date.to_datetime
-          end
           c = a.competitions.order(:admission_date).where.not(admission_date: nil).last
           direction = c.competition_item.competitive_group_item.direction_id
           finance_source = c.competition_item.finance_source_id
           stage = order_dates[c.admission_date] if order_dates[c.admission_date] || nil
+          ooa.Application do |am|
+            am.ApplicationNumber [a.campaign.year_start, "%04d" % a.application_number].join('-')
+            am.RegistrationDate a.registration_date.to_datetime
+            am.OrderIdLevelBudget 1 if finance_source == 14
+          end
           ooa.OrderOfAdmissionUID "#{direction}-11-#{finance_source}-5-#{stage}"
           ooa.DirectionID direction
           ooa.EducationFormID 11
