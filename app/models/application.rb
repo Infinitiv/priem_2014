@@ -195,9 +195,8 @@ class Application < ActiveRecord::Base
               v[:enrolled] = c
             end
           end
-        else
-           v[:competitions] - [c]
         end
+        v[:competitions] - [c]
       end
     end
 

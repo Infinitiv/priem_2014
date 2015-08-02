@@ -38,7 +38,7 @@ before_action :set_application, only: [:show]
   
   def competition_one_list
     @competition_items = @default_campaign.competition_items
-    @target_ortanizations = @default_campaign.target_organizations.uniq
+    @target_organizations = @default_campaign.target_organizations.uniq
     @applications_hash = Application.competition_lists(@default_campaign)
     respond_to do |format|
       format.html
