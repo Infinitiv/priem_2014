@@ -1,3 +1,4 @@
+#encoding: utf-8
 class Request < ActiveRecord::Base
   require 'builder'
   belongs_to :query
