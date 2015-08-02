@@ -454,7 +454,7 @@ class Request < ActiveRecord::Base
           ooa.EducationFormID 11
           ooa.FinanceSourceID finance_source
           ooa.EducationLevelID 5
-          ooa.Stage stage
+          ooa.Stage stage if stage
           ooa.IsBeneficiary (10..12).to_a.include?(c.competition_item_id) ? true : false 
         end
       end
