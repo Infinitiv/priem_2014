@@ -446,11 +446,15 @@ class Request < ActiveRecord::Base
             am.RegistrationDate a.registration_date.to_datetime
           end
           c = a.competitions.order(:admission_date).where.not(admission_date: nil).last
-          ooa.DirectionID c.competition_item.competitive_group_item.direction_id
+          direction = c.competition_item.competitive_group_item.direction_id
+          finance_source = c.competition_item.finance_source_id
+          stage = order_dates[c.admission_date] if order_dates[c.admission_date]
+          ooa.OrderOfAdmissionUID "#{direction}-11-#{finance_source}-5-#{stage}"
+          ooa.DirectionID direction
           ooa.EducationFormID 11
-          ooa.FinanceSourceID c.competition_item.finance_source_id
+          ooa.FinanceSourceID finance_source
           ooa.EducationLevelID 5
-          ooa.Stage order_dates[c.admission_date] if order_dates[c.admission_date]
+          ooa.Stage stage
           ooa.IsBeneficiary (10..12).to_a.include?(c.competition_item_id) ? true : false 
         end
       end
