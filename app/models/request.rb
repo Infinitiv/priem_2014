@@ -320,14 +320,30 @@ class Request < ActiveRecord::Base
           a.EntranceTestResults do |etrs|
             am.marks.each do |mark|
               etrs.EntranceTestResult do |etr|
+                subject_id = mark.entrance_test_item.subject_id
                 etr.UID mark.id
                 etr.ResultValue mark.value
                 etr.ResultSourceTypeID 1
                   etr.EntranceTestSubject do |ets|
-                    ets.SubjectID mark.entrance_test_item.subject_id
+                    ets.SubjectID subject_id
                   end
                 etr.EntranceTestTypeID mark.entrance_test_item.entrance_test_type_id
                 etr.CompetitiveGroupID mark.entrance_test_item.competitive_group_id
+                if mark.form == "ВЭ"
+                  etr.ResultDocument do |rd|
+                    rd.InstitutionDocument do |id|
+                      protocol = case subject_id
+                                  when 11
+                                    1
+                                  when 4
+                                    2
+                                  when 1
+                                    3
+                                  end
+                      id.DocumentNumber protocol
+                    end
+                  end
+                end
               end
             end
           end
