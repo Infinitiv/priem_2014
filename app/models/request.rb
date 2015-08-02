@@ -448,7 +448,7 @@ class Request < ActiveRecord::Base
           c = a.competitions.order(:admission_date).where.not(admission_date: nil).last
           direction = c.competition_item.competitive_group_item.direction_id
           finance_source = c.competition_item.finance_source_id
-          stage = order_dates[c.admission_date] if order_dates[c.admission_date]
+          stage = order_dates[c.admission_date] if order_dates[c.admission_date] || nil
           ooa.OrderOfAdmissionUID "#{direction}-11-#{finance_source}-5-#{stage}"
           ooa.DirectionID direction
           ooa.EducationFormID 11
