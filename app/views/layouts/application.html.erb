@@ -29,6 +29,16 @@
         <li><%= link_to 'Конкурс', competition_applications_path %></li>
         <li><%= link_to 'Проверка ЕГЭ', ege_to_txt_applications_path %></li>
         <li><%= link_to 'Кампании', campaigns_path %></li>
+        <li class="dropdown">
+          <%= link_to "#", class: "dropdown-toggle", data: {toggle: "dropdown"}, role: "button", aria: {haspopup: true, expanded: false} do %>
+          Списки
+          <span class="caret"></span>
+          <% end %>
+          <ul class="dropdown-menu">
+            <li><%= link_to 'Все отдельно', competition_lists_applications_path(format: :xls) %></li>
+            <li><%= link_to 'Все в одном', competition_one_list_applications_path(format: :xls) %></li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>

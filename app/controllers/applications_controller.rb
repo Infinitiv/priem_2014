@@ -17,6 +17,11 @@ before_action :set_application, only: [:show]
     redirect_to applications_url, notice: "Recommended imported."
   end
   
+  def import_contracts
+    Application.import_contracts(params[:file], @default_campaign)
+    redirect_to applications_url, notice: "Contracts imported."
+  end
+  
   def errors
     @errors = Application.errors(@default_campaign)
   end

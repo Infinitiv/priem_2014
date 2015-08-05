@@ -56,6 +56,21 @@ class Application < ActiveRecord::Base
       end
     end
   end
+  
+  def self.import_contracts(file, default_campaign)
+    competition_items = default_campaign.competition_items
+    spreadsheet = open_spreadsheet(file)
+    header = spreadsheet.row(1)
+    (2..spreadsheet.last_row).to_a.each do |i|
+      row = Hash[[header, spreadsheet.row(i)].transpose]
+      competitions = Competition.joins(:application).where(applications: {application_number: row["application_number"], campaign_id: default_campaign})
+      competitions.each{|c| c.update_attributes(contract: false)}
+      competition_items.each do |competition_item|
+        competition = competitions.find_by_competition_item_id(competition_item.id) if row[competition_item.code.to_s]
+        competition.update_attributes(contract: true) if competition && row[competition_item.code.to_s]
+      end
+    end
+  end
 
   def self.open_spreadsheet(file)
     case File.extname(file.original_filename)
@@ -147,6 +162,7 @@ class Application < ActiveRecord::Base
       applications_hash[application][:full_summa] = [applications_hash[application][:summa], applications_hash[application][:achievement]].sum
       applications_hash[application][:competitions] = competitions[application.id]
       applications_hash[application][:original_received] = true if application.original_received_date
+      applications_hash[application][:enrolled] = nil
     end
     applications_hash = applications_hash.sort_by{|k, v| [v[:full_summa], v[:summa], v[:chemistry], v[:biology], v[:russian]]}.reverse
     
@@ -181,24 +197,25 @@ class Application < ActiveRecord::Base
     
     
     applications_hash.each do |k, v|
-      v[:competitions].each do |c|
-        unless v[:enrolled]
-          if (44..46).to_a.include?(c) 
-            if competitions[c][k.target_organization_id] && competitions[c][k.target_organization_id] > 0
-              competitions[c][k.target_organization_id] -= 1
-              v[:competitions] - [c] if v[:enrolled]
-              v[:enrolled] = c
+      v[:competitions].reverse.each do |c|
+        if (44..46).to_a.include?(c) 
+          if competitions[c][k.target_organization_id] && competitions[c][k.target_organization_id] > 0
+            competitions[c][k.target_organization_id] -= 1
+            competitions[v[:enrolled]] +=1 if v[:enrolled]
+            v[:enrolled] = c
+          end
+        else
+          if competitions[c] > 0
+            if v[:enrolled]
+              (44..46).to_a.include?(v[:enrolled]) ? competitions[v[:enrolled]][k.target_organization_id] += 1 : competitions[v[:enrolled]] += 1 
             end
-          else
-            if competitions[c] > 0
-              competitions[c] -= 1
-              v[:enrolled] = c
-            end
+            v[:enrolled] = c
           end
         end
-        v[:competitions] - [c]
       end
+      v[:competitions].delete_if{|i| v[:competitions].index(i) >= v[:competitions].index(v[:enrolled])} if v[:enrolled]
     end
+    
 
     applications_hash
   end
@@ -208,6 +225,7 @@ class Application < ActiveRecord::Base
     achiev_apps = Application.where(campaign_id: default_campaign).joins(:institution_achievements).map(&:id)
     marks = Mark.order(:entrance_test_item_id).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, ms| {a => ms.map{|m| m.value}}}.inject(:merge)
     competitions = Competition.order(:priority).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge)
+    contract_competitions = Competition.order(:priority).joins(:application).where(contract: true, applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge)
     admissed_competitions = Competition.order(:priority).joins(:application).where(applications: {campaign_id: default_campaign}).where.not(admission_date: nil).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item_id}}}.inject(:merge) || []
     admissed_competitions.each do |a, acs|
       ac = acs.first
@@ -226,6 +244,7 @@ class Application < ActiveRecord::Base
       applications_hash[application][:full_summa] = [applications_hash[application][:summa], applications_hash[application][:achievement]].sum
       applications_hash[application][:competitions] = competitions[application.id]
       applications_hash[application][:original_received] = true if application.original_received_date
+      applications_hash[application][:contracts] = contract_competitions[application.id] || []
     end
     @applications_hash = applications_hash.sort_by{|k, v| [v[:full_summa], v[:summa], v[:chemistry], v[:biology], v[:russian]]}.reverse
   end

@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     collection do
       post 'import'
       post 'import_recommended'
+      post 'import_contracts'
       get 'errors'
       get 'competition'
       get 'ege_to_txt'

@@ -7,6 +7,10 @@
   = file_field_tag :file
   %br/
   = submit_tag "Загрузить рекомендованных", class: "btn btn-primary"
+= form_tag import_contracts_applications_path, multipart: true do
+  = file_field_tag :file
+  %br/
+  = submit_tag "Загрузить договоры", class: "btn btn-primary"
 %table.table.datatable
   %thead
     %th Номер заявления

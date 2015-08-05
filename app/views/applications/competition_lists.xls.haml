@@ -42,6 +42,9 @@
                 %Data{"ss:Type" => "String"} Оригинал/Копия
               %Cell
                 %Data{"ss:Type" => "String"} Приоритет этого конкурса
+              - if (4..6).include?(i.code)
+                %Cell
+                  %Data{"ss:Type" => "String"} Договор
             - n = 0
             - applications.each do |a, h|
               - n += 1
@@ -69,6 +72,9 @@
                   %Data{"ss:Type" => "String"}= h[:original_received] ? "Оригинал" : "Копия"
                 %Cell
                   %Data{"ss:Type" => "Number"}= h[:competitions].index(i.id) + 1
+                - if (4..6).include?(i.code)
+                  %Cell
+                    %Data{"ss:Type" => "String"}= "Есть" if h[:contracts].include?(i.id)
         - else
           - @target_organizations.each do |t|
             - target_applications = applications.select{|a, h| a[:target_organization_id] == t.id}
