@@ -194,29 +194,42 @@ class Application < ActiveRecord::Base
     competitions[47] = admission_volume_hash[438][:number_quota_o]
     competitions[48] = admission_volume_hash[441][:number_quota_o]
     competitions[49] = admission_volume_hash[470][:number_quota_o]
-    
-    
-    applications_hash.each do |k, v|
-      v[:competitions].reverse.each do |c|
-        if (44..46).to_a.include?(c) 
-          if competitions[c][k.target_organization_id] && competitions[c][k.target_organization_id] > 0
-            competitions[c][k.target_organization_id] -= 1
-            competitions[v[:enrolled]] +=1 if v[:enrolled]
-            v[:enrolled] = c
-          end
-        else
-          if competitions[c] > 0
-            if v[:enrolled]
-              (44..46).to_a.include?(v[:enrolled]) ? competitions[v[:enrolled]][k.target_organization_id] += 1 : competitions[v[:enrolled]] += 1 
+    trigger = 1
+    while trigger == 1
+      applications_hash.each do |k, v|
+        (v[:competitions] - [v[:enrolled]]).reverse.each do |c|
+          if (44..46).to_a.include?(c) 
+            if competitions[c][k.target_organization_id] && competitions[c][k.target_organization_id] > 0
+              competitions[c][k.target_organization_id] -= 1
+              competitions[v[:enrolled]] +=1 if v[:enrolled]
+              v[:enrolled] = c
             end
-            v[:enrolled] = c
+          else
+            if competitions[c] > 0
+              if v[:enrolled]
+                (44..46).to_a.include?(v[:enrolled]) ? competitions[v[:enrolled]][k.target_organization_id] += 1 : competitions[v[:enrolled]] += 1 
+              end
+              competitions[c] -= 1
+              v[:enrolled] = c
+            end
           end
         end
+      en = v[:competitions].index(v[:enrolled])
+      v[:competitions].delete_if{|i| v[:competitions].index(i) > en} if v[:enrolled]
       end
-      v[:competitions].delete_if{|i| v[:competitions].index(i) >= v[:competitions].index(v[:enrolled])} if v[:enrolled]
+      trigger = [competitions[47], competitions[48], competitions[49], competitions[44].values.sum, competitions[45].values.sum, competitions[46].values.sum].sum > 0 ? 1 : 0
+      if trigger == 1
+        competitions[38] += [competitions[47], competitions[44].values.sum].sum
+        competitions[47] = 0
+        competitions[44].each{|k, v| competitions[44][k] = 0}
+        competitions[39] += [competitions[48], competitions[45].values.sum].sum
+        competitions[48] = 0
+        competitions[45].each{|k, v| competitions[45][k] = 0}
+        competitions[40] += [competitions[49], competitions[46].values.sum].sum
+        competitions[49] = 0
+        competitions[46].each{|k, v| competitions[46][k] = 0}
+      end
     end
-    
-
     applications_hash
   end
   
