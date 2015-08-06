@@ -152,7 +152,7 @@ class Application < ActiveRecord::Base
     app_competitions = Competition.order(:priority).includes(:competition_item).joins(:application).where(applications: {campaign_id: default_campaign}).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item.code}}}.inject(:merge)
     contract_app_competitions = Competition.order(:priority).includes(:competition_item).joins(:application).where(applications: {campaign_id: default_campaign}, competition_items: {code: (4..6).to_a}, contract: false).group_by(&:application_id).map{|a, cs| {a => cs.map{|c| c.competition_item.code}}}.inject(:merge)
     contract_app_competitions.each do |k, v|
-      app_competitions[k] - contract_app_competitions[k]
+      app_competitions[k] = app_competitions[k] - contract_app_competitions[k]
     end
     
     applications_hash = {}
