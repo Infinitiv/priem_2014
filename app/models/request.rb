@@ -251,8 +251,8 @@ class Request < ActiveRecord::Base
             e.LastName am.entrant_last_name
             e.GenderID am.gender_id
           end
-          a.RegistrationDate am.registration_date.to_datetime
-          a.LastDenyDate am.last_deny_day.to_datetime if am.last_deny_day
+          a.RegistrationDate am.registration_date.to_datetime.gsub('+00', '+03')
+          a.LastDenyDate am.last_deny_day.to_datetime.gsub('+00', '+03') if am.last_deny_day
           a.NeedHostel am.need_hostel
           a.StatusID am.status_id
           a.SelectedCompetitiveGroups do |scg|
