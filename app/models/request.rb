@@ -342,6 +342,15 @@ class Request < ActiveRecord::Base
                                     3
                                   end
                       id.DocumentNumber protocol
+                      date = case subject_id
+                              when 11
+                                "2015-07-14"
+                              when 4
+                                "2015-07-18"
+                              when 1
+                                "2015-07-22"
+                      id.DocumentDate date.to_datetime.to_s.gsub('+00', '+03')
+                      id.DocumentTypeID 1
                     end
                   end
                 end
