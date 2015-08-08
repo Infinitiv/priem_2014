@@ -350,7 +350,7 @@ class Request < ActiveRecord::Base
                               when 1
                                 "2015-07-22"
                               end
-                      id.DocumentDate date.to_datetime.to_s.gsub('+00', '+03')
+                      id.DocumentDate date
                       id.DocumentTypeID 1
                     end
                   end
