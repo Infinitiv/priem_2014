@@ -324,7 +324,7 @@ class Request < ActiveRecord::Base
                 subject_id = mark.entrance_test_item.subject_id
                 etr.UID mark.id
                 etr.ResultValue mark.value
-                etr.ResultSourceTypeID 1
+                etr.ResultSourceTypeID mark.form == "ВЭ" ? 2 : 1
                   etr.EntranceTestSubject do |ets|
                     ets.SubjectID subject_id
                   end
