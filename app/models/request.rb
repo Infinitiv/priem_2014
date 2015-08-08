@@ -335,11 +335,11 @@ class Request < ActiveRecord::Base
                     rd.InstitutionDocument do |id|
                       protocol = case subject_id
                                   when 11
-                                    1
+                                    "#{am.campaign.year_end}-1"
                                   when 4
-                                    2
+                                    "#{am.campaign.year_end}-2"
                                   when 1
-                                    3
+                                    "#{am.campaign.year_end}-3"
                                   end
                       id.DocumentNumber protocol
                       date = case subject_id
